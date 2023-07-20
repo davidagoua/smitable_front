@@ -15,7 +15,7 @@
           <div style="margin-left: 400px; margin-top: 100px" class="col-md-4">
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title text-center">PAGE DE CONNEXION</h4>
+                <h4 class="card-title text-center">CONNEXION</h4>
 
               </div>
               <div class="card-content ">
@@ -95,7 +95,7 @@ const router = useRouter()
 var loading = ref(false)
 
 const submit = async ()=>{
-  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch('http://localhost:8000/auth/token/login/')
+  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.AUTH_BACKEND_URL+'/auth/token/login/')
       .post(user).json()
   loading = myloading
 
