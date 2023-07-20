@@ -91,6 +91,16 @@
 import Nav from "../components/Nav.vue";
 import MainMenu from "../components/MainMenu.vue";
 import ProgressSpinner from "primevue/progressspinner";
+import useMyFetch from "../compoables/useMyFetch.js";
+import {watch} from "vue";
+
+
+
+const {data: statistiques} = useMyFetch("statistiques/").json();
+
+watch(statistiques, (value)=>{
+  console.log(value)
+})
 
 </script>
 

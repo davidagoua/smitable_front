@@ -80,6 +80,7 @@
 
 <script setup>
 import {reactive, ref} from "vue";
+import useMyFetch from "../compoables/useMyFetch.js";
 import {useFetch} from "@vueuse/core";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
@@ -88,14 +89,16 @@ import {useAuthStore} from "../stores/auth.js";
 document.querySelector('body').style.backgroundImage = "url('images/smit-home.png')"
 document.querySelector('body').style.backgroundSize = "cover"
 
+
 const authStore = useAuthStore()
 const user = reactive({})
 const toast = useToast()
 const router = useRouter()
 var loading = ref(false)
-
+console.log(import.meta.env.VITE_BACKEND_URL)
 const submit = async ()=>{
-  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.AUTH_BACKEND_URL+'/auth/token/login/')
+
+  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.VITE_BACKEND_URL+'auth/token/login/')
       .post(user).json()
   loading = myloading
 
@@ -123,7 +126,7 @@ const submit = async ()=>{
       life: 3000
     })
     localStorage.setItem('token', data.value.auth_token ?? 'veryshow')
-    const {data: user} = await useFetch('http://localhost:8000/auth/me/',{
+    const {data: user} = await useMyFetch('auth/me/',{
       async beforeFetch({ url, options, cancel }) {
         const myToken = data.value.auth_token
 
