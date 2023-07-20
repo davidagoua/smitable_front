@@ -8,13 +8,19 @@
               <div class="row">
                 <div class="col-lg-4 col-md-4 d-flex justify-content-around">
                   <div class="patient-img-name text-center">
-                    <img src="" alt="" class="card-img-top mb-1 patient-img img-fluid rounded-circle">
-                    <h4>{{ patient.prenoms +' '+ patient.nom }} </h4>
+                    <vue-qr size="150" text="patient.code_patient"/>
+                    <h4>{{ patient.code_patient }} </h4>
                   </div>
                 </div>
                 <div class="col-lg-8 col-md-8 justify-content-around">
                   <div class="patient-info">
                     <ul class="list-unstyled">
+                      <li>
+                        <div class="patient-info-heading d-flex justify-content-between  "> <span class="small">Nom:</span> <strong class="text-right w-100"> {{patient.nom}}  </strong></div>
+                      </li>
+                      <li>
+                        <div class="patient-info-heading d-flex justify-content-between  "> <span class="small">Prénoms:</span> <strong class="text-right w-100"> {{patient.prenoms}}  </strong></div>
+                      </li>
                       <li>
                         <div class="patient-info-heading d-flex justify-content-between  "> <span class="small"> Date et lieu de Naissance:</span> <strong class="text-right w-100"> {{patient.date_naissance}} à {{patient.lieu_naissance}} </strong></div>
                       </li>
@@ -25,7 +31,7 @@
                         <div class="patient-info-heading d-flex justify-content-between">  <span class="small">Contact:</span><strong>  {{patient.contact}} </strong></div>
                       </li>
                       <li>
-                        <div class="patient-info-heading d-flex justify-content-between">  <span class="small">Sexe  :</span><strong> {{patient.genre == 'M' ? 'Homme' : 'Femme'}} </strong></div>
+                        <div class="patient-info-heading d-flex justify-content-between">  <span class="small">Sexe:</span><strong> {{patient.genre == 'M' ? 'Homme' : 'Femme'}} </strong></div>
                       </li>
                       <li>
                         <div class="patient-info-heading d-flex justify-content-between">  <span class="small">Profession   :</span><strong> {{patient.profession}} </strong></div>
@@ -72,7 +78,7 @@
               <h5 class="card-title text-black-50"> <i class="ft-users text-lg-right"></i> Suivie (VIH)</h5>
               <div class="d-flex">
                 <Button size="small" class="mr-1">Fiche de prelevement au Bilan initial</Button>
-                <Button size="small" class="mr-1">Fiche de bilan initial pour prise en charge</Button>
+                <Button size="small" @click="goTo('/fiche/bilan-initial')" class="mr-1">Fiche de bilan initial pour prise en charge</Button>
                 <Button size="small" class="mr-1">Fiche de suivi des personnes vivant du VIH</Button>
                 <Button size="small" class="mr-1">Fiche de routine</Button>
                 <Button size="small" class="mr-1">Fiche en cas d'exposition</Button>
@@ -134,7 +140,7 @@
                   <tbody>
                   <tr v-for="consultation in patient.consultation_set" :key="consultation.id">
                     <td class=" border-top-0 align-middle">
-                      <img src="" width="30" alt="" class="rounded-circle doctor-img">
+                      <img src="/images/prof_heolie.jpg" width="30" alt="" class="rounded-circle doctor-img">
                     </td>
                     <td class="align-middle border-top-0">
                       <i class="la la-calendar-check-o"></i> {{ consultation.created_at}}
@@ -202,7 +208,7 @@
                   <tbody>
                   <tr>
                     <td class=" border-top-0 align-middle">
-                      <img src="" width="30" alt="" class="rounded-circle doctor-img">
+                      <img src="/images/prof_heolie.jpg" width="30" alt="" class="rounded-circle doctor-img">
                     </td>
                     <td class="align-middle border-top-0">
                       <i class="la la-calendar-check-o"></i> 15/10/18
@@ -446,7 +452,7 @@ import {useRouter, useRoute} from "vue-router";
 import {onMounted, reactive, watch, ref, computed} from "vue";
 import useMyFetch from "../compoables/useMyFetch.js";
 import {useToast} from "primevue/usetoast";
-
+import vueQr from 'vue-qr/src/packages/vue-qr.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -476,6 +482,10 @@ onMounted(async()=>{
   }
 
 })
+
+const goTo = (path) => {
+  router.push(path)
+}
 
 </script>
 

@@ -1,11 +1,11 @@
 <template>
 
-  <div v-if="isAuthenticated" class="main-menu menu-fixed menu-light menu-accordion    menu-shadow " data-scroll-to-active="true"
-       data-img="">
+  <div  class="main-menu menu-fixed menu-light menu-accordion    menu-shadow " data-scroll-to-active="true"
+       data-img="/theme-assets/images/backgrounds/02.jpg">
     <div class="navbar-header">
       <ul class="nav navbar-nav flex-row">
         <li class="nav-item mr-auto"><router-link to="/" class="navbar-brand"><img class="brand-logo"
-                                                                                    alt="Chameleon admin logo"
+                                                                                    alt=""
                                                                                     src=""/>
           <h3 class="brand-text">SMIT-SGH</h3></router-link></li>
         <li class="nav-item d-md-none"><a class="nav-link close-navbar"><i class="ft-x"></i></a></li>
@@ -16,8 +16,8 @@
         <li class="nav-item ml-2">
           <span class="text-primary">Générale</span>
         </li>
-        <li class="active"><a href="index.html"><i class="ft-home"></i><span class="menu-title"
-                                                                             data-i18n="">Dashboard</span></a>
+        <li class=""><router-link to="/"><i class="ft-home"></i><span class="menu-title"
+                                                               data-i18n="">Dashboard</span></router-link>
         </li>
         <li class=""><router-link to="/recherche-global"><i class="ft-search"></i><span class="menu-title"
                                                                              data-i18n="">Recherche</span></router-link>
@@ -39,21 +39,28 @@
         </li>
         <li class=" nav-item"><router-link to="/hospitalisation/liste"><i class="ft-users"></i><span class="menu-title" data-i18n="">Patients</span></router-link>
         </li>
-        <li class=" nav-item"><router-link to="/hospitalisation/unites"><i class="ft-home"></i><span class="menu-title" data-i18n="">Unités</span></router-link>
+        <li class=" nav-item"><router-link to="/hospitalisation/unites"><i class="la la-hotel"></i><span class="menu-title" data-i18n="">Unités</span></router-link>
         </li>
 
         <li class="nav-item ml-2">
           <span class="text-primary">Services</span>
         </li>
-        <li v-for="service in services"  :key="service.id" class=" nav-item"><router-link :to="'/service/liste/'+ service.id + '/'+ service.nom"><i class="ft-layers"></i><span class="menu-title" data-i18n="">{{ service.nom }}</span></router-link>
+        <li v-for="service in services"  :key="service.id" class=" nav-item">
+          <router-link :to="'/service/liste/'+ service.id + '/'+ service.nom" class="d-flex w-100">
+            <i class="ft-layers"></i>
+            <span class="menu-title" data-i18n="">{{ service.nom }}</span>
+            <div class="text-right flex-grow-1">
+              <Badge>{{ service.consultation_count}}</Badge>
+            </div>
+          </router-link>
         </li>
 
         <li class="nav-item ml-2">
           <span class="text-primary">Laboratoire</span>
         </li>
-        <li class=" nav-item"><router-link to="/analyse/encours"><i class="ft-stethoscope"></i><span class="menu-title" data-i18n="">Analyses en cours</span></router-link>
+        <li class=" nav-item"><router-link to="/analyse/encours"><i class="la la-stethoscope"></i><span class="menu-title" data-i18n="">Analyses en cours</span></router-link>
         </li>
-        <li class=" nav-item"><a href="charts.html"><i class="ft-stethoscope"></i><span class="menu-title" data-i18n="">Analyses terminées</span></a>
+        <li class=" nav-item"><router-link to="/analyse/analyse-termines"><i class="la la-stethoscope"></i><span class="menu-title" data-i18n="">Analyses terminées</span></router-link>
         </li>
 
         <li class="nav-item ml-2">
@@ -62,16 +69,16 @@
         <li class=" nav-item"><router-link to="/pharmacie/ordonance"><i class="ft-file-text"></i><span class="menu-title"
                                                                                    data-i18n="">Ordonances</span></router-link>
         </li>
-        <li class=" nav-item"><router-link to="/pharmacie/list-medicaments"><i class="ft-medkit"></i><span class="menu-title"
+        <li class=" nav-item"><router-link to="/pharmacie/list-medicaments"><i class="la la-cubes"></i><span class="menu-title"
                                                                                   data-i18n="">Stock Medicaments</span></router-link>
         </li>
-        <li class="nav-item ml-2">
+        <li v-if="authStore.isAdmin" class="nav-item ml-2">
           <span class="text-primary">Paramètres</span>
         </li>
-        <li class=" nav-item"><a href="https://themeselection.com/demo/chameleon-admin-template/documentation"><i
-            class="ft-cogs"></i><span class="menu-title" data-i18n="">Générales</span></a>
+        <li  class=" nav-item"><a href=""><i
+            class="la la-cogs"></i><span class="menu-title" data-i18n="">Générales</span></a>
         </li>
-        <li class=" nav-item"><a href="https://themeselection.com/demo/chameleon-admin-template/documentation"><i
+        <li class=" nav-item"><a href=""><i
             class="ft-book"></i><span class="menu-title" data-i18n="">Documentation</span></a>
         </li>
       </ul>
@@ -82,12 +89,14 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, watch} from 'vue'
+import {onMounted, watch} from 'vue'
 import {useStorage} from '@vueuse/core'
-import {useRouter} from "vue-router";
 import {useAuthStore} from "../stores/auth.js";
+import {storeToRefs} from "pinia";
+import Badge from "primevue/badge";
 
-
+let authStore = useAuthStore()
+let {user} = storeToRefs(authStore)
 let isAuthenticated = localStorage.getItem('token') !== null
 let services = useStorage('services', [])
 const fetchServices = async ()=>{

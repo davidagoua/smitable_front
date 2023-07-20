@@ -33,11 +33,6 @@ import {useAuthStore} from "../stores/auth.js";
 const router = useRouter()
 const store = useAuthStore()
 
-onMounted(() => {
-  if (!store.isAuth) {
-    router.push('/connexion')
-  }
-})
 
 
 const props = defineProps({

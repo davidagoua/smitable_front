@@ -53,7 +53,7 @@ import {useToast} from "primevue/usetoast";
 
 const props = defineProps(['consultation'])
 const params = ref({})
-const emits = defineEmits()
+const emit = defineEmits()
 const loading = ref(false)
 const toast = useToast()
 const newConstantes = reactive({

@@ -6,11 +6,11 @@
   <Menu :model="options" :popup="true" ref="panel"></Menu>
 
   <Dialog modal v-model:visible="showRdvForm" @hide="closeDialog">
-    <RdvForm :patient="props.patient"></RdvForm>
+    <RdvForm @close-dialog="closeDialog" :patient="props.patient"></RdvForm>
   </Dialog>
 
   <Dialog modal v-model:visible="showTestRapideForm" @hide="closeDialog">
-    <TestRapideForm :patient="props.patient"></TestRapideForm>
+    <TestRapideForm  @close-dialog="closeDialog" :patient="props.patient"></TestRapideForm>
   </Dialog>
 </div>
 </template>
@@ -24,6 +24,8 @@ import {useDialog} from "primevue/usedialog";
 import RdvForm from "./RdvForm.vue";
 import TestRapideForm from "./TestRapideForm.vue";
 import Dialog from "primevue/dialog";
+import useMyFetch from "../compoables/useMyFetch.js";
+import {useToast} from "primevue/usetoast";
 
 
 const props = defineProps({
@@ -32,6 +34,7 @@ const props = defineProps({
     default: () => {}
   }
 })
+const toast = useToast()
 const dialog = useDialog()
 const showTestRapideForm = ref(false)
 const showRdvForm = ref(false)
@@ -47,10 +50,10 @@ const options = ref([
     },
   },
   {
-    label: 'Test rapide',
-    icon: PrimeIcons.EYE,
+    label: 'Attente',
+    icon: PrimeIcons.CLOCK,
     command: (event) => {
-      showTestRapideForm.value = true
+      createConsultation(event)
     }
   },
 ])
@@ -61,7 +64,26 @@ const togglePanel = (event, patient) => {
 
 const closeDialog = ()=>{
   showRdvForm.value = false
-  showRdvForm.value = false
+  showTestRapideForm.value = false
+}
+
+const createConsultation = (event) => {
+  const {onFetchResponse} = useMyFetch('consultations/').post({
+    patient_id: props.patient.id,
+    date: new Date(),
+    motif: 'Consultation',
+    service_id: null,
+    status: 0
+  }).json()
+
+  onFetchResponse((response)=>{
+    if(response.ok){
+      toast.add({severity:'success', summary: 'Succès', detail: "Patient enregistré en salle d'attente", life: 3000});
+      dialog.hide()
+    }else{
+      toast.add({severity:'error', summary: 'Erreur', detail: 'Erreur lors de la création de la consultation', life: 3000});
+    }
+  })
 }
 </script>
 

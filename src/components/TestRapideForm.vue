@@ -12,7 +12,8 @@
       </div>
       <div class="col-4 mt-1">
         <label for="">Resultats</label>
-        <SelectButton class="w-100" v-model="newAnalyse.resultat" :options="[{value: false, label: 'Negatif'},{value: true, label: 'Positif'}]" optionValue="value" dataKey="value" optionLabel="label"></SelectButton>
+        <SelectButton :pt="{button: ({ context }) => ({class: context.active ? 'bg-red-400 border-cyan-400' : false})}" class="w-100" v-model="newAnalyse.resultat" :options="[{value: false, label: 'Negatif'},{value: true, label: 'Positif'}]" optionValue="value" dataKey="value" optionLabel="label" >
+        </SelectButton>
       </div>
       <div class="col-8 mt-1" v-show="newAnalyse.resultat===true">
         <label for="">Affecter à un service</label><br>

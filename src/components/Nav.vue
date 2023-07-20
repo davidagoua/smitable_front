@@ -41,7 +41,7 @@
               <div class="dropdown-menu dropdown-menu-right">
                 <div class="arrow_box_right"><a class="dropdown-item" href="#"><span class="avatar avatar-online"><img
                     src="" alt="avatar"><span
-                    class="user-name text-bold-700 ml-1">John Doe</span></span></a>
+                    class="user-name text-bold-700 ml-1">{{ user?.username}}</span></span></a>
                   <div class="dropdown-divider"></div>
                   <a href="#" @click="logout" class="dropdown-item"><i class="ft-power"></i> Deconnexion</a>
                 </div>
@@ -58,11 +58,12 @@
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import {useAuthStore} from "../stores/auth.js";
+import {storeToRefs} from "pinia";
+
 
 const router = useRouter()
-
-
-
+const authStore = useAuthStore()
+const {user} = storeToRefs(authStore)
 const logout = () => {
   localStorage.removeItem('token')
   setTimeout(() => router.push('/connexion'), 1000)

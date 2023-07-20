@@ -3,18 +3,34 @@
   <div>
     <section class="card">
       <div class="card-body">
-        <DataTable ref="patientAttenteTable" v-model:selection="selectedConsultation" :value="consultations" filter-display="menu"  data-key="id">
+        <div class="d-flex mb-1 justify-content-between">
+          <div></div>
+          <div>
+            <Button class="ml-1" size="small" @click="goTo('/new-patient')">
+              <span class="ft-plus"></span>
+              Ajouter
+            </Button>
+          </div>
+        </div>
+        <DataTable
+          ref="patientAttenteTable"
+          v-model:selection="selectedConsultation"
+          :value="consultations"
+          :filters="filters"
+          filter-display="rows"
+          data-key="id"
+          paginator filter
+          rows="100"
+          :globalFilterFields="['patient.nom','patient.prenoms','patient.code_patient']"
+        >
           <template #header>
             <div class="d-flex justify-content-between">
               <div>
-
-              </div>
-              <div>
                 <Button size="small" severity="secondary" @click="exportData()">Exporter</Button>
-                <Button class="ml-1" size="small" @click="goTo('/new-patient')">
-                  <span class="ft-plus"></span>
-                  Ajouter
-                </Button>
+              </div>
+              <div class="align-items-center">
+                <InputText v-model="filters['global'].value"  placeholder="Recherche Global" />
+                <Button  outlined icon="pi pi-filter" size="small" class=" ml-1" />
               </div>
             </div>
           </template>
@@ -24,10 +40,19 @@
               <ConstanteView :key="slotProps.data.id" :code_patient="slotProps.data.patient.code_patient" :constante="slotProps.data.constante_set.slice(-1)[0]"/>
             </template>
           </Column>
-          <Column field="created_at" sortable="" header="Date de création"></Column>
+          <Column field="created_at" sortable="" header="Date de création">
+            <template #body="{data}">
+              {{ useDateFormat(data.created_at, 'DD-MM-YYYY HH:mm:ss')}}
+            </template>
+          </Column>
           <Column field="patient.nom" sortable header="Nom"></Column>
-          <Column field="patient.prenoms" header="Prénoms"></Column>
+          <Column field="patient.prenoms" header="Prénoms">
+            <template #filter="{ filterModel, filterCallback }">
+              <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Search by name" />
+            </template>
+          </Column>
           <Column field="patient.date_naissance" header="Date de naissance"></Column>
+          <Column field="service.nom" header="Service"></Column>
           <Column header="Actions">
             <template #body="slotProps">
               <Button size="small" :aria-controls="'overlay_menu_'"  text  @click="toggleMenu($event, slotProps.data)">
@@ -54,6 +79,15 @@
   <Dialog modal v-model:visible="showTestRapideForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <TestRapideForm @close-dialog="closeDialog" :consultation_id="selectedItem.id" :patient="selectedItem.patient"></TestRapideForm>
   </Dialog>
+  <Dialog modal v-model:visible="showServiceForm" @hide="closeDialog" :style="{width: '50vw'}">
+    <form @submit.prevent="saveService">
+      <h3 class="text-center">Choisir un service</h3>
+      <div class="d-flex justify-content-center">
+        <Dropdown v-model="service" class="w-50" :options="services" option-label="nom" option-value="id"></Dropdown>
+        <Button type="submit" label="Enregistrer" class="ml-2"/>
+      </div>
+    </form>
+  </Dialog>
 </PageLayout>
 </template>
 
@@ -75,6 +109,8 @@ import ConstanteView from "../../components/ConstanteView.vue";
 import useMyFetch from "../../compoables/useMyFetch.js";
 import RdvForm from "../../components/RdvForm.vue";
 import TestRapideForm from "../../components/TestRapideForm.vue";
+import {useDateFormat} from "@vueuse/core";
+import Dropdown from "primevue/dropdown";
 
 const dialog = useDialog()
 const toast = useToast()
@@ -84,9 +120,11 @@ const route = useRouter()
 const selectedConsultation = ref([])
 const patientAttenteTable = ref()
 const menu = ref()
+const service = ref([])
 const selectedItem = ref({})
 const showConstanteForm = ref(false)
 const showTestRapideForm = ref(false)
+const showServiceForm = ref(false)
 const showRdvForm = ref(false)
 
 const menuOptions = ref([
@@ -111,11 +149,32 @@ const menuOptions = ref([
       showTestRapideForm.value = true
     }
   },
+  {
+    label: 'Service',
+    icon: PrimeIcons.DATABASE,
+    command: (event) => {
+      showServiceForm.value = true
+    }
+  },
 
 ])
 
-watch(consultations, (newValue, oldValue) => {
+const {data: services} = useMyFetch('services/').json()
+const saveService = (service)=>{
+  selectedItem.value.service_id = service.value
+  const {onFetchResponse} = useMyFetch('consultations/'+selectedItem.value.id+'/').put(selectedItem.value).json()
+  onFetchResponse((response)=>{
+    if(response.ok){
+      toast.add({severity:'success', summary:'Service', detail:'Service enregistré avec succès', life: 3000})
+      closeDialog()
+    }else{
+      toast.add({severity:'error', summary:'Service', detail:"Erreur lors de l'enregistrement du service", life: 3000})
+    }
+  })
+}
 
+watch(services, (newValue, oldValue) => {
+  console.log(newValue)
 })
 
 onMounted(() => {
@@ -139,7 +198,16 @@ const closeDialog = ()=>{
   showConstanteForm.value = false
   showRdvForm.value = false
   showTestRapideForm.value = false
+  showServiceForm.value = false
 }
+
+
+const filters = ref({
+  global: {
+    value: '',
+    matchMode: 'contains',
+  },
+})
 
 </script>
 

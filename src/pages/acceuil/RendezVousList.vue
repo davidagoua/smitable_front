@@ -20,7 +20,6 @@
         </div>
       </template>
       <Column selection-mode="multiple"> </Column>
-      <Column field="id" header="#ID"></Column>
       <Column field="date" sortable header="Date"></Column>
       <Column field="patient.code_patient" header="Code Patient">
 
@@ -31,9 +30,6 @@
       <Column field="motif" header="Motif"></Column>
       <Column header="Actions">
         <template #body="slotProps">
-          <Button text serverity="secondary" size="small">
-            <span class="pi pi-eye"></span>
-          </Button>
           <Button text serverity="secondary" size="small">
             <span class="pi pi-pencil"></span>
           </Button>

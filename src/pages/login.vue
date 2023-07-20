@@ -15,7 +15,7 @@
           <div style="margin-left: 400px; margin-top: 100px" class="col-md-4">
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title">login page</h4>
+                <h4 class="card-title text-center">PAGE DE CONNEXION</h4>
 
               </div>
               <div class="card-content ">
@@ -40,7 +40,7 @@
                           <i class="feather icon-lock"></i>
                         </div>
                       </fieldset>
-                      <div class="form-group d-flex justify-content-between align-items-center">
+                      <div class="form-group d-flex mt-3 justify-content-between align-items-center">
                         <div class="text-left">
                           <fieldset class="checkbox">
                             <div class="vs-checkbox-con vs-checkbox-primary">
@@ -50,11 +50,11 @@
                                                                             <i class="vs-icon feather icon-check"></i>
                                                                         </span>
                                                                     </span>
-                              <span class="">Remember me</span>
+                              <span class="ml-1">Se souvenir de moi</span>
                             </div>
                           </fieldset>
                         </div>
-                        <div class="text-right"><a href="auth-forgot-password.html" class="card-link">Forgot Password?</a></div>
+                        <div class="text-right"><a href="auth-forgot-password.html" class="card-link">Mot de passe oublié ?</a></div>
                       </div>
 
                       <button type="submit" class="btn btn-primary float-right btn-inline">Connecter</button>
@@ -79,14 +79,14 @@
 </template>
 
 <script setup>
-import InputText from "primevue/inputtext";
 import {reactive, ref} from "vue";
 import {useFetch} from "@vueuse/core";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "../stores/auth.js";
 
-
+document.querySelector('body').style.backgroundImage = "url('images/smit-home.png')"
+document.querySelector('body').style.backgroundSize = "cover"
 
 const authStore = useAuthStore()
 const user = reactive({})
@@ -95,19 +95,27 @@ const router = useRouter()
 var loading = ref(false)
 
 const submit = async ()=>{
-  const {data, loading: myloading, onFetchError, onFetchResponse, isFetching, isFinished} = await useFetch('http://localhost:8000/auth/token/login/')
+  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch('http://localhost:8000/auth/token/login/')
       .post(user).json()
   loading = myloading
+
+  onFetchResponse((response)=>{
+    console.log(response.status)
+    if(response.status === 401){
+      toast.add({
+        severity: 'error',
+        detail: "Nom d'utilisateur ou mot de passe incorrect"
+      })
+    }
+  })
 
   onFetchError((error)=>{
     console.error(error)
     toast.add({
       severity: 'error',
-      message: error.message
+      detail: error.message
     })
   })
-  console.log(data.value)
-
   if(data.value.auth_token){
     toast.add({
       severity: 'success',
@@ -115,7 +123,7 @@ const submit = async ()=>{
       life: 3000
     })
     localStorage.setItem('token', data.value.auth_token ?? 'veryshow')
-    const {data: user} = await useFetch('http://localhost:8000/auth/users/me/',{
+    const {data: user} = await useFetch('http://localhost:8000/auth/me/',{
       async beforeFetch({ url, options, cancel }) {
         const myToken = data.value.auth_token
 
@@ -135,17 +143,16 @@ const submit = async ()=>{
       }
     }).get().json()
 
+    console.log(data.value.auth_token)
     console.log(user)
     authStore.login(data.value.auth_token, user)
     router.push('/')
+    document.querySelector('body').style.backgroundImage = null
   }
 
 }
 </script>
 
-<style >
-body{
-  background-image: url('images/smit-home.png');
-  background-size: cover;
-}
+<style scoped>
+
 </style>
