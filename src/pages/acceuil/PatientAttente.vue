@@ -114,8 +114,7 @@ import Dropdown from "primevue/dropdown";
 
 const dialog = useDialog()
 const toast = useToast()
-const consultationStore = useConsultationStore();
-const consultations = computed(() => consultationStore.consultationsAttente);
+const {data: consultations} = useMyFetch('consultations/').json();
 const route = useRouter()
 const selectedConsultation = ref([])
 const patientAttenteTable = ref()

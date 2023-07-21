@@ -94,6 +94,7 @@ import {useStorage} from '@vueuse/core'
 import {useAuthStore} from "../stores/auth.js";
 import {storeToRefs} from "pinia";
 import Badge from "primevue/badge";
+import useMyFetch from "../compoables/useMyFetch.js";
 
 let authStore = useAuthStore()
 let {user} = storeToRefs(authStore)
@@ -101,7 +102,7 @@ let isAuthenticated = localStorage.getItem('token') !== null
 let services = useStorage('services', [])
 const fetchServices = async ()=>{
   try {
-    const data = await ((await fetch('http://localhost:8000/api/v1/services/')).json())
+    const {data} = await useMyFetch('services/').json()
     services = data
     localStorage.setItem('services', JSON.stringify(services))
   }catch (e) {
