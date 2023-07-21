@@ -176,10 +176,6 @@ watch(services, (newValue, oldValue) => {
   console.log(newValue)
 })
 
-onMounted(() => {
-  consultationStore.fetchConsultations();
-})
-
 const toggleMenu = (event, data) => {
   selectedItem.value = data
   menu.value.toggle(event);
