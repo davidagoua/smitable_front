@@ -18,24 +18,42 @@
     <Column header="Code Patient" field="patient.code_patient"/>
     <Column header="Nom" field="patient.nom"/>
     <Column header="Prénoms" field="patient.prenoms"/>
-    <Column header="Status" field="patient.state">
-      <template #body="slotProp">
-        <Tag value="slotProp.data.state"></Tag>
+    <Column header="Status" field="state">
+      <template #body="{data}">
+        <Tag :value="{
+          0: 'En attente',
+          1: 'En cours',
+          2: 'Refusé'
+        }[data.state]" :severity="{
+          0: 'default',
+          1: 'success',
+          2: 'danger'
+        }[data.state]"></Tag>
       </template>
     </Column>
-    <Column header="Actions">
-      <template #body="slotProp">
-        <Button size="small" @click="goTo('/dossier/'+slotProps.data.patient.id)">
+    <Column header="Actions"  class="d-flex">
+      <template #body="{data}">
+        <Button size="small" @click="goTo('/dossier/'+data.patient.id)">
           <span class="ft ft-folder"></span>
           <span class="ml-1">Dossier</span>
         </Button>
-        <template v-show="slotProp.data.state === 0">
-          <Button size="small" class="mr-1">Valider</Button>
+        <div v-show="data.state === 0">
+          <Button size="small" class="ml-1" @click="showUniteForm(data)">Valider</Button>
           <Button size="small" severity="danger">Rejeter</Button>
-        </template>
+        </div>
       </template>
     </Column>
   </DataTable>
+
+  <Dialog v-model:visible="isUniteForm" :style="{width: '25vw'}">
+    <div>
+      <label for="">Box Libre</label><br>
+      <Dropdown v-model="selected.unite" class="w-100" :options="boxes" option-value="id" :option-label="'nom'"></Dropdown>
+      <p class="text-right mt-2 ">
+        <Button @click="submitUniteForm">Enregistrer</Button>
+      </p>
+    </div>
+  </Dialog>
 </section>
 </PageLayout>
 </template>
@@ -46,9 +64,31 @@ import Column from "primevue/column";
 import DataTable from "primevue/datatable";
 import useMyFetch from "../../compoables/useMyFetch.js";
 import InputText from "primevue/inputtext";
-
+import Tag from "primevue/tag";
+import {ref, computed} from 'vue'
+import Dialog from "primevue/dialog";
+import Dropdown from "primevue/dropdown";
+import {useRouter} from 'vue-router'
 
 const {data: hospitalisations, loading} = useMyFetch('hospitalisations/').json()
+const selected = ref()
+const router = useRouter()
+const isUniteForm = ref(false)
+const {data: boxes} = useMyFetch("boxes/").json()
+const showUniteForm = (hospi)=>{
+  isUniteForm.value = true
+  selected.value = hospi
+}
+const submitUniteForm = ()=>{
+  console.log(selected)
+  selected.value.state = 1
+  let {data} = useMyFetch('hospitalisations/'+selected.value.id+'/').put(selected.value).json()
+  selected.value = null
+  isUniteForm.value = false
+}
+const goTo = (path)=>{
+  router.push(path)
+}
 </script>
 
 <style scoped>

@@ -11,15 +11,41 @@
         </Button>
       </div>
     </div>
+    <div >
+      <form class="row mb-2 align-items-end">
+        <div class="col-md-4 mt-1">
+          <label for="">Nom</label><br>
+          <InputText class="w-100" v-model="searchForm.nom"/>
+        </div>
+        <div class="col-md-4 mt-1">
+          <label for="">Prénoms</label><br>
+          <InputText class="w-100" v-model="searchForm.prenoms"/>
+        </div>
+        <div class="col-md-4 mt-1">
+          <label for="">Téléphone</label><br>
+          <InputNumber class="w-100" v-model="searchForm.contact"/>
+        </div>
+        <div class="col-md-4 mt-1">
+          <label for="">Code patient</label><br>
+          <InputText class="w-100" v-model="searchForm.code_patient"/>
+        </div>
+        <div class="col-md-4 mt-1">
+          <label for="">Date de naissance</label><br>
+          <InputText class="w-100" type="date" v-model="searchForm.date_naissance"/>
+        </div>
+        <div class="col-md-4 mt-1 text-right">
+          <Button @click="submit">
+            <i class="pi pi-search mr-3"></i>
+            Rechercher
+          </Button>
+        </div>
+      </form>
+    </div>
     <DataTable :filters="filters" :value="patients" data-key="id" :selection="selectedPatient"   :loading="patientLoading">
       <template #header>
         <div class="d-flex justify-content-between">
           <div></div>
-          <div class="d-flex">
-            <Button  outlined icon="pi pi-filter" class=" mr-2" />
-            <InputText v-model="filters.global.value" placeholder="Recherche Global" class="mr-1" />
-            <Button @click="search" icon="pi pi-search" />
-          </div>
+
         </div>
       </template>
 
@@ -60,6 +86,7 @@ import useMyFetch from "../compoables/useMyFetch.js";
 import {useToast}  from "primevue/usetoast";
 import InputText from "primevue/inputtext";
 import {useRouter} from "vue-router";
+import InputNumber from 'primevue/inputnumber';
 
 
 const router = useRouter();
@@ -92,6 +119,21 @@ const goTo = (path) => {
 };
 
 
+const searchForm= reactive({})
+
+const submit = ()=>{
+  try{
+    patientLoading.value = true
+    let querypath = `code_patient=${searchForm.code_patient}&nom=${searchForm.nom}&prenoms=${searchForm.prenoms}&contact=${searchForm.contact}`
+    let {data, loading } = useMyFetch('patients/?'+querypath).json()
+    patients = data
+  }catch (e) {
+
+  }finally {
+    patientLoading.value = false
+  }
+
+}
 
 </script>
 

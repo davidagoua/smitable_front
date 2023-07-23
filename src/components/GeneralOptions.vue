@@ -56,6 +56,13 @@ const options = ref([
       createConsultation(event)
     }
   },
+  {
+    label: 'Urgence',
+    icon: 'la la-ambulance',
+    command: (event) => {
+      createUrgence(event)
+    }
+  },
 ])
 
 const togglePanel = (event, patient) => {
@@ -79,6 +86,25 @@ const createConsultation = (event) => {
   onFetchResponse((response)=>{
     if(response.ok){
       toast.add({severity:'success', summary: 'Succès', detail: "Patient enregistré en salle d'attente", life: 3000});
+      dialog.hide()
+    }else{
+      toast.add({severity:'error', summary: 'Erreur', detail: 'Erreur lors de la création de la consultation', life: 3000});
+    }
+  })
+}
+
+const createUrgence = (event)=>{
+  const {onFetchResponse} = useMyFetch('consultations/').post({
+    patient_id: props.patient.id,
+    date: new Date(),
+    mode_entree: 'Urgence',
+    service_id: null,
+    status: 20
+  }).json()
+
+  onFetchResponse((response)=>{
+    if(response.ok){
+      toast.add({severity:'success', summary: 'Succès', detail: "Patient enregistré en urgence", life: 3000});
       dialog.hide()
     }else{
       toast.add({severity:'error', summary: 'Erreur', detail: 'Erreur lors de la création de la consultation', life: 3000});

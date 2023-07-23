@@ -6,17 +6,27 @@
   <section class="card">
     <div class="card-body">
       <div >
-        <div class="mb-3">
+        <div v-show="showSearchPatient" class="mb-3">
           <div>
             <h3>Rechercher un patient patient</h3>
             <div class="p-inputgroup flex-1">
-              <InputText class="w-100" placeholder="Entrez le code patient" />
-              <Button label="Rechercher" />
+              <AutoComplete optionLabel="code_patient" v-model="query" :suggestions="suggestions" @complete="search" class="w-100" placeholder="Entrez le code patient" >
+                <template #option="{option}">
+                  <div class="d-flex align-items-center">
+                    <div class="">
+                      <i class="pi pi-user mr-3"></i>
+                    </div>
+                    <div>{{ option.nom }} {{option.prenoms}}</div>
+                  </div>
+                </template>
+              </AutoComplete>
+              <Button label="Rechercher" @click="selectQuery" />
             </div>
           </div>
         </div>
         <div>
-          <h3>Enregistrer un nouveau patient</h3>
+          <h3 v-if="showSearchPatient">Enregistrer un nouveau patient</h3>
+          <h3 v-else="showSearchPatient">Modification information patient</h3>
           <div class="row">
             <div class="col-md-6">
               <label for="" >Nom</label><br>
@@ -69,7 +79,7 @@
             <div class="col-md-12 row mt-1" v-for="(domicile, index) in patient.domiciles" :key="index">
               <div class="col-md-2 ">
                 <label for="">Pays</label>
-                <Dropdown v-model="domicile.pays" class="w-100" :options="villes" filter placeholder="Selectionner votre ville"  />
+                <Dropdown v-model="domicile.pays" class="w-100" :option-label="'name.common'" option-value="name.common" :options="pays" filter placeholder="Selectionner votre ville"  />
 
               </div>
               <div class="col-md-2  ">
@@ -147,16 +157,22 @@ import InputMask from 'primevue/inputmask';
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton';
 import MultiSelect from "primevue/multiselect";
-import {reactive, ref} from "vue";
+import AutoComplete from "primevue/autocomplete";
+import {reactive, ref, onMounted, watch} from "vue";
 import Steps from "primevue/steps";
 import {usePatientStore} from "../../stores/patient.js";
 import {useConsultationStore} from "../../stores/consultation.js";
 import {useToast} from "primevue/usetoast";
+import {useFetch} from '@vueuse/core'
+import {useRoute} from 'vue-router'
+import useMyFetch from "../../compoables/useMyFetch.js";
 
-const patientStore = usePatientStore()
+const route = useRoute()
 const consultationStore = useConsultationStore()
 const toast = useToast()
 
+
+const patientStore = usePatientStore()
 const showElseNationalite = ref(false)
 const loading = ref(false)
 const professions = ref([
@@ -169,6 +185,9 @@ const communes = [
     'Yopougon','Cocody','Songon','Adjame','Marcory','Plateau','Abobo','Treichville','Koumassi','Bingerville'
 ]
 
+// country list
+const {data: pays}= useFetch('https://restcountries.com/v3.1/independent?status=true')
+
 
 const steps = ref([
   {label: 'Informations Personelle'},
@@ -177,8 +196,8 @@ const steps = ref([
 
 ])
 const activeIndex = ref(0)
-
-const patient = reactive({
+const showSearchPatient = ref(true)
+let patient = reactive({
   nom: '',
   prenoms: '',
   genre: '',
@@ -186,29 +205,45 @@ const patient = reactive({
   dateNaissance: '',
   lieuNaissance: '',
   numeroTelephone: '',
-  domiciles: [{}]
+  domiciles: [{}],
 })
+
 
 const consultation = reactive({
   service_id: null
 })
-
+watch(patient, (value)=>{
+  console.log(value)
+})
+onMounted(async ()=>{
+  if(route.params.patient_id){
+    showSearchPatient.value = false
+    let {data} = await useMyFetch('patients/'+route.params.patient_id+'/').json()
+    console.log(data)
+    patient = data
+  }
+})
 const submit = async()=>{
   try{
     loading.value = true
-    const newPatient = await patientStore.addPatient(patient)
-    console.log(newPatient)
-    if(newPatient.id){
-      consultation.patient_id = newPatient.id
-      const newConsultation = await consultationStore.addConsultation(consultation)
-      if(newConsultation.id){
-        toast.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: 'Patient enregistré avec succès',
-          life: 3000
-        });
+    if(showSearchPatient.value){
+      const newPatient = await patientStore.addPatient(patient)
+      console.log(newPatient)
+      if(newPatient.id){
+        consultation.patient_id = newPatient.id
+        const newConsultation = await consultationStore.addConsultation(consultation)
+        if(newConsultation.id){
+          toast.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Patient enregistré avec succès',
+            life: 3000
+          });
+        }
+
       }
+    }else{
+      const {data} = await useMyFetch('patients/'+patient.id+'/').put(patient).json()
 
     }
 
@@ -231,6 +266,18 @@ const next = ()=>{
   }catch (e) {
     console.log(e)
   }
+}
+
+let suggestions = ref([])
+let query = ref('')
+const search = (event)=>{
+  let {data} = useMyFetch('patients/?code_patient='+event.query).json()
+  suggestions = data
+}
+
+const selectQuery = ()=>{
+  patient = reactive(query.value)
+  console.log(patient)
 }
 
 </script>

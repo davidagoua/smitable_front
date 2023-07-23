@@ -32,6 +32,30 @@
      </div>
    </div>
 
+   <div class="mt-3 row">
+     <div class="col-3" v-for="(ant, index) in consultation.antecedents">
+       <div class="p-inputgroup flex-1">
+          <span class="p-inputgroup-addon">
+              {{ant}}
+          </span>
+         <InputText placeholder="valeur" />
+       </div>
+     </div>
+   </div>
+
+   <div class="mt-3">
+
+   <div class="row" >
+     <div class="col-md-6 "  >
+       <label for="">Molécules</label><br>
+       <MultiSelect class="w-100 flex-grow-1" v-model="protocole.molecules_id" :options="molecules" option-value="id" filter option-label="nom"/>
+     </div>
+
+   </div>
+ </div>
+
+
+
    <div class="mt-3">
      <div class="d-flex justify-content-between">
        <Button @click="prescriptions.push({})" size="small" >
@@ -60,6 +84,8 @@
      </div>
    </div>
 
+
+
    <div class="mt-3">
      <div class="d-flex justify-content-between">
        <Button @click="analyses.push({})" size="small" >
@@ -80,7 +106,7 @@
        </div>
        <div class="col-md-5">
          <label for="">Laboratoire</label><br>
-         <Dropdown class="w-100"  v-model="analyse.laboratoire"/>
+         <Dropdown :options="laboratoires" option-label="nom" option-value="id" class="w-100"  v-model="analyse.laboratoire"/>
        </div>
        <div class="float-right">
          <Button @click="removePrescription(index)" size="small" text class="pi pi-times text-red"></Button>
@@ -114,13 +140,12 @@ import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import AutoComplete from "primevue/autocomplete";
 import Editor from 'primevue/editor';
-import {onMounted, reactive, ref, inject, defineProps, defineEmits} from "vue";
+import {onMounted, reactive, ref, inject, defineProps, defineEmits, computed} from "vue";
 import MultiSelect from "primevue/multiselect";
 import useMyFetch from "../compoables/useMyFetch.js";
 import InputNumber from "primevue/inputnumber";
 import {useToast} from "primevue/usetoast";
 import {useDialog} from "primevue/usedialog";
-
 
 
 const props = defineProps({
@@ -139,6 +164,9 @@ const toast = useToast()
 const dialogRef = inject('dialogRef')
 let prescriptions = reactive([])
 let analyses = reactive([])
+let protocole = reactive({
+  molecules_id: []
+})
 let hospitalisation = reactive({
   patient_id: props.consultation.patient.id
 })
@@ -147,13 +175,16 @@ let showHospitalisation = ref(false)
 let allLoad = ref(false)
 const {data: analyseOptions, loading: loadingAnalyse} = useMyFetch("analyses/").json()
 const {data: medicaments, loading: loadingMedicament} = useMyFetch("medicaments/").json()
+const {data: laboratoires} = useMyFetch("laboratoires/").json()
+const {data: molecules} = useMyFetch("molecules/").json()
 const {data: unites} = useMyFetch("unites/").json()
+const antecedantsList = computed(()=> consultation.antedecants)
+
 const removePrescription = (i)=>{
   prescriptions = prescriptions.filter((p, index)=> index !== i )
 }
 const motifsConsultations = [
   'Douleur','Fièvre','Toux','Vomissement','Diarrhée','Maux de tête','Maux de ventre','Maux de gorge','Maux de dos','Maux de pied','Maux de main','Maux de jambe','Maux de bras','Maux de cou','Maux de poitrine',
-
 ]
 const antecedents = [
   'Diabète','Hypertension','Paludisme','Tuberculose','VIH','Hépatite','Autres'
@@ -164,10 +195,24 @@ const save = async()=>{
   try{
     allLoad.value = true
     // save prescription
-    let {error: ordError} = useMyFetch('ordonances/').post({
-      lignes: prescriptions,
-      consultation_id: props.consultation.id
-    }).json()
+
+    if(protocole.molecules_id.length > 0){
+      protocole.patient_id = props.consultation.patient.id
+      let {error: protocolError} = useMyFetch('protocoles/').post(protocole).json()
+    }
+
+
+    if(showHospitalisation.value){
+      hospitalisation.patient_id = props.consultation.patient.id
+      let {error: hosError} = useMyFetch('hospitalisations/').post(hospitalisation).json()
+    }
+
+    if(prescriptions.length > 0){
+     let {error: ordError} = useMyFetch('ordonances/').post({
+       lignes: prescriptions,
+       consultation_id: props.consultation.id
+     }).json()
+    }
 
     // save examens
 
@@ -181,19 +226,17 @@ const save = async()=>{
     }
 
     // save hospitalisation
-    if(hospitalisation.hasOwnProperty('unite')){
-      hospitalisation.service_id = service_id
-      let {error: hosError} = useMyFetch('hospitalisations/').post(hospitalisation).json()
-    }
 
-
-    emit('close-dialog')
-    console.log('whenever')
     toast.add({
       severity: 'success',
       detail: "Consultation enregistrés",
       life: 3000
     })
+
+    emit('close-dialog')
+    console.log('whenever')
+
+
   }catch (e) {
 
   }finally {

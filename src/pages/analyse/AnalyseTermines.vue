@@ -32,7 +32,7 @@ import PageLayout from "../../components/PageLayout.vue";
 import useMyFetch from "../../compoables/useMyFetch.js";
 
 
-const {data: analyses, loading} = useMyFetch('analyse-patient/?state=1').json()
+const {data: analyses, loading} = useMyFetch('analyse-patient/?state=2').json()
 </script>
 <style scoped>
 

@@ -8,10 +8,22 @@
       <Column field="created_at" header="Date"></Column>
       <Column field="consultation.patient.code_patient" header="Code Patient"></Column>
       <Column field="consultation.patient.contact" header="Contact"></Column>
-      <Column field="consultation.patient.nom" header="Nom"></Column>
-      <Column field="consultation.patient.prenoms" header="Prénoms"></Column>
+      <Column field="consultation.patient.nom" header="Nom">
+        <template #body="{data}">
+          <span>********</span>
+        </template>
+      </Column>
+      <Column field="consultation.patient.prenoms" header="Prénoms">
+        <template #body="{data}">
+          <span>********</span>
+        </template>
+      </Column>
       <Column field="consultation.service.nom" header="Service"></Column>
-
+      <Column header="Actions">
+        <Button size="small" >
+          <i class="pi pi-eye"></i>
+        </Button>
+      </Column>
     </DataTable>
   </section>
 </PageLayout>

@@ -37,10 +37,11 @@
             </li>
             <li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="#"
                                                            data-toggle="dropdown"> <span
-                class="avatar avatar-online"><img src="" alt="avatar"><i></i></span></a>
+                class="avatar avatar-online"><i class="pi pi-user"></i><i></i></span></a>
               <div class="dropdown-menu dropdown-menu-right">
-                <div class="arrow_box_right"><a class="dropdown-item" href="#"><span class="avatar avatar-online"><img
-                    src="" alt="avatar"><span
+                <div class="arrow_box_right"><a class="dropdown-item" href="#"><span class="avatar avatar-online">
+
+                  <span
                     class="user-name text-bold-700 ml-1">{{ user?.username}}</span></span></a>
                   <div class="dropdown-divider"></div>
                   <a href="#" @click="logout" class="dropdown-item"><i class="ft-power"></i> Deconnexion</a>
@@ -66,6 +67,7 @@ const authStore = useAuthStore()
 const {user} = storeToRefs(authStore)
 const logout = () => {
   localStorage.removeItem('token')
+  authStore.logout()
   setTimeout(() => router.push('/connexion'), 1000)
 }
 </script>

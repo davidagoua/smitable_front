@@ -14,7 +14,7 @@ const routes = [
             {path:'/pharmacie/ordonance', component: () => import('./pages/pharmacie/Ordonances.vue')},
             {path:'/hospitalisation/liste', component: () => import('./pages/hospitalisation/HospitalisationList.vue')},
             {path:'/hospitalisation/unites', component: () => import('./pages/hospitalisation/UniteList.vue')},
-            {path: '/new-patient', component: () => import('./pages/acceuil/NewPatient.vue')},
+            {path: '/new-patient/:patient_id?', component: () => import('./pages/acceuil/NewPatient.vue')},
             {path: '/patient-attente', component: () => import('./pages/acceuil/PatientAttente.vue')},
             {path: '/recherche-global', component: () => import('./pages/RecherchePatient.vue')},
             {path: '/patient-urgence', component: () => import('./pages/acceuil/PatientUrgence.vue')},
@@ -26,6 +26,7 @@ const routes = [
             {path: '/analyse/encours', component: ()=> import('./pages/analyse/AnalyseEnCour.vue')},
             {path: '/fiche/bilan-initial', component: ()=> import('./pages/dossiers/FicheBilan.vue')},
             {path: '/analyse/analyse-termines', component: ()=> import('./pages/analyse/AnalyseTermines.vue')},
+            {path: '/analyse/prelevements', component: ()=> import('./pages/analyse/Prelevements.vue')},
         ]
     }
 

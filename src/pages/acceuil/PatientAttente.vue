@@ -55,6 +55,7 @@
           <Column field="service.nom" header="Service"></Column>
           <Column header="Actions">
             <template #body="slotProps">
+              <Button @click="goTo('/new-patient/'+slotProps.data.patient.id)" text size="small" icon="pi pi-pencil"></Button>
               <Button size="small" :aria-controls="'overlay_menu_'"  text  @click="toggleMenu($event, slotProps.data)">
                 <span class="la la-ellipsis-v"></span>
               </Button>
@@ -70,18 +71,17 @@
     </section>
   </div>
 
-  <Dialog v-if="selectedItem" v-model:visible="showConstanteForm" @hide="closeDialog" :style="{ width: '50vw' }">
+  <Dialog header="Constante" v-if="selectedItem" v-model:visible="showConstanteForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <ConstanteForm @close-dialog="closeDialog" :consultation="selectedItem"/>
   </Dialog>
-  <Dialog modal v-model:visible="showRdvForm" @hide="closeDialog" :style="{ width: '50vw' }">
+  <Dialog modal header="Programmer un Rendez-vous" v-model:visible="showRdvForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <RdvForm @close-dialog="closeDialog" :patient="selectedItem.patient"></RdvForm>
   </Dialog>
-  <Dialog modal v-model:visible="showTestRapideForm" @hide="closeDialog" :style="{ width: '50vw' }">
+  <Dialog header="Test rapide" modal v-model:visible="showTestRapideForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <TestRapideForm @close-dialog="closeDialog" :consultation_id="selectedItem.id" :patient="selectedItem.patient"></TestRapideForm>
   </Dialog>
-  <Dialog modal v-model:visible="showServiceForm" @hide="closeDialog" :style="{width: '50vw'}">
+  <Dialog header="Affecter à un service" modal v-model:visible="showServiceForm" @hide="closeDialog" :style="{width: '50vw'}">
     <form @submit.prevent="saveService">
-      <h3 class="text-center">Choisir un service</h3>
       <div class="d-flex justify-content-center">
         <Dropdown v-model="service" class="w-50" :options="services" option-label="nom" option-value="id"></Dropdown>
         <Button type="submit" label="Enregistrer" class="ml-2"/>
@@ -114,7 +114,7 @@ import Dropdown from "primevue/dropdown";
 
 const dialog = useDialog()
 const toast = useToast()
-const {data: consultations} = useMyFetch('consultations/').json();
+const {data: consultations} = useMyFetch('consultations/?status=0').json();
 const route = useRouter()
 const selectedConsultation = ref([])
 const patientAttenteTable = ref()
@@ -159,7 +159,8 @@ const menuOptions = ref([
 ])
 
 const {data: services} = useMyFetch('services/').json()
-const saveService = (service)=>{
+const saveService = (event)=>{
+  console.log(service)
   selectedItem.value.service_id = service.value
   const {onFetchResponse} = useMyFetch('consultations/'+selectedItem.value.id+'/').put(selectedItem.value).json()
   onFetchResponse((response)=>{

@@ -126,14 +126,13 @@ const submit = async ()=>{
       life: 3000
     })
     localStorage.setItem('token', data.value.auth_token ?? 'veryshow')
-    const {data: user} = await useMyFetch('auth/me/',{
+    const {data: user, onFetchResponse} = await useMyFetch('auth/me/',{
       async beforeFetch({ url, options, cancel }) {
         const myToken = data.value.auth_token
 
         if (!myToken) {
           cancel()
         }
-
 
         options.headers = {
           ...options.headers,
@@ -145,12 +144,12 @@ const submit = async ()=>{
         }
       }
     }).get().json()
-
     console.log(data.value.auth_token)
     console.log(user)
-    authStore.login(data.value.auth_token, user)
+    authStore.login(data.value.auth_token, user.value)
     router.push('/')
     document.querySelector('body').style.backgroundImage = null
+
   }
 
 }

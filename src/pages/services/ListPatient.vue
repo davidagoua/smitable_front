@@ -22,6 +22,7 @@
         <Button size="small"  class="mr-1" @click="createConsultation(slotProps.data)">
           <span>Consulter</span>
         </Button>
+        <Button size="small" text icon="pi pi-download"></Button>
         <router-link class="p-button p-button-sm" size="small" :to="'/dossier/'+slotProps.data.patient.id">
           <span class="ft ft-folder"></span>
           <span class="ml-1">Dossier</span>
@@ -30,7 +31,7 @@
     </Column>
   </DataTable>
 
-  <Dialog v-if="selectedItem" :style="{ width: '70vw' }" @hide="closeDialog" modal v-model:visible="showConsultationForm">
+  <Dialog header="Consultation" v-if="selectedItem" :style="{ width: '70vw' }" @hide="closeDialog" modal v-model:visible="showConsultationForm">
     <ConsultationForm @close-dialog="closeDialog" :consultation="selectedItem" :service_id="service_id" />
   </Dialog>
 </PageLayout>

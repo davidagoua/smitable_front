@@ -13,6 +13,7 @@ import router from "./routes.js";
 import InputText from "primevue/inputtext";
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import Dialog from "primevue/dialog";
 
 
 const app = createApp(App)
@@ -28,5 +29,8 @@ app.use(router);
 app.component(DataTable);
 app.component(Column);
 app.component('Button', Button);
+app.component('Dialog', Dialog);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
 app.component('InputText', InputText);
 app.mount('#app')

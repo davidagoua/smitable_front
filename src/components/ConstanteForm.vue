@@ -22,8 +22,8 @@
         <InputNumber class="w-100" v-model="newConstantes.poul"/>
       </div>
       <div class="col-6">
-        <label for="">Tension ()</label><br>
-        <InputNumber class="w-100" v-model="newConstantes.tension"/>
+        <label for="">Pression Arterielle </label><br>
+        <InputNumber class="w-100" v-model="newConstantes.pression_arterielle"/>
       </div>
     </div>
     <div class="row mt-2">

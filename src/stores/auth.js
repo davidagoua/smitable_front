@@ -25,6 +25,14 @@ export const useAuthStore = defineStore({
         },
         hasPermission(permission) {
             return this.user?.permissions.includes(permission);
+        },
+        isInGroup(group) {
+            return this.user?.groups.includes(group)
+        },
+        logout(user) {
+            this.isLoggedOut = false;
+            this.user = null;
+            this.token = null;
         }
     },
     persist: true

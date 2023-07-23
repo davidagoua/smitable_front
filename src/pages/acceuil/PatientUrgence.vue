@@ -30,10 +30,12 @@
         <Column field="patient.contact" header="Contact"></Column>
         <Column header="Actions">
           <template #body="slotProp">
-            <router-link class="p-button p-button-sm" size="small" :to="'/dossier/'+slotProp.data.patient.id">
+            <router-link class="p-button p-button-sm mr-2" size="small" :to="'/dossier/'+slotProp.data.patient.id">
               <span class="ft ft-folder"></span>
               <span class="ml-1">Dossier</span>
             </router-link>
+            <Button size="small">Retabli</Button>
+            <Button size="small"  severity="danger">Déces</Button>
           </template>
         </Column>
       </DataTable>
@@ -54,7 +56,7 @@ import useMyFetch from "../../compoables/useMyFetch.js";
 
 
 const patientStore = usePatientStore();
-const {data: consultations, loading} = useMyFetch('consultation/mode_entree?urgence').json()
+const {data: consultations, loading} = useMyFetch('consultations_urgence/').json()
 
 const router = useRouter()
 const goTo = (path) => router.push(path)
