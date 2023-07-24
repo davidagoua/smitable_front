@@ -78,7 +78,7 @@
               <h5 class="card-title text-black-50"> <i class="ft-users text-lg-right"></i> Suivie (VIH)</h5>
               <div class="d-flex">
                 <Button size="small" class="mr-1">Fiche de prelevement au Bilan initial</Button>
-                <Button size="small" @click="goTo('/fiche/bilan-initial')" class="mr-1">Fiche de bilan initial pour prise en charge</Button>
+                <Button size="small" @click="goTo('/fiche/bilan-initial/'+patient_id)" class="mr-1">Fiche de bilan initial pour prise en charge</Button>
                 <Button size="small" class="mr-1">Fiche de suivi des personnes vivant du VIH</Button>
                 <Button size="small" class="mr-1">Fiche de routine</Button>
                 <Button size="small" class="mr-1">Fiche en cas d'exposition</Button>

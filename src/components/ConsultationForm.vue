@@ -96,13 +96,9 @@
      </div>
      <hr>
      <div v-for="(analyse, index) in analyses" class="row" :key="index">
-       <div class="col-md-4">
+       <div class="col-md-6">
          <label for="">Analyse</label><br>
          <Dropdown class="w-100" :options="analyseOptions" option-value="id" filter option-label="nom"  v-model="analyse.medicament"/>
-       </div>
-       <div class="col-md-3">
-         <label for="">Code echantillon</label>
-         <InputText class="w-100" v-model="analyse.code_barre"/>
        </div>
        <div class="col-md-5">
          <label for="">Laboratoire</label><br>

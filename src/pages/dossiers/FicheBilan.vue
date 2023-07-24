@@ -26,7 +26,7 @@
           <Fieldset :toggleable="true" >
             <div class="form-group">
               <label for="">Medecin prescipteur</label>
-              <InputText class="form-control" />
+              <InputText  class="form-control" />
             </div>
             <div class="form-group">
               <label for="">LAB 01 (Date de prelevement)</label>
@@ -61,23 +61,82 @@
               <label for="">Serologie VIH a faire ?</label>
               <SelectButton :options="['Oui, pour la première fois','Non, pour les visites suivantes']"></SelectButton>
             </div>
-            <div class="form-group">
-              <label for="">Glycèmie ?</label>
-              <SelectButton :options="['Oui','Non']"></SelectButton>
-            </div>
-            <div class="form-group">
-              <label for="">Creatininémie ?</label>
-              <SelectButton :options="['Oui','Non']"></SelectButton>
-            </div>
-            <div class="form-group">
-              <label for="">Transaminases ?</label>
-              <SelectButton :options="['Oui','Non']"></SelectButton>
+            <div class="row">
+              <div class="form-group col-4">
+                <label for="">Glycèmie ?</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
+
+              <div class="form-group col-4">
+                <label for="">Creatininémie ?</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
+              <div class="form-group col-4">
+                <label for="">Transaminases ?</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
+              <div class="form-group col-4">
+                <label for="">Tube EDTA prelévé ?</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
+              <div class="form-group col-4">
+                <label for="">NFS ?</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
+              <div class="form-group col-4">
+                <label for="">CD4/CD8</label>
+                <SelectButton :options="['Oui','Non']"></SelectButton>
+              </div>
             </div>
 
 
 
           </Fieldset>
+          <Fieldset class="mt-1" legend="Autres examens">
+            <div class="form-group">
+              <label>Charge virale plasmique ?</label>
+              <SelectButton
+                :options="[
+                    'Oui, Si necessaire en cas d\'echec thérapeutique',
+                    'non',
+                    'NA / Patient non encore sous ARV thérapie'
+                ]"
+              ></SelectButton>
+            </div>
+            <div class="form-group">
+              <label>Test urinaire de grossesse</label>
+              <SelectButton
+                :options="[
+                    'Pour les femmes, test a la demande',
+                    'non',
+                ]"
+              ></SelectButton>
+            </div>
+            <div class="form-group">
+              <label>Status VIH ?</label>
+              <SelectButton
+                :options="[
+                    'VIH 1',
+                    'VIH 2',
+                    'VIH 1+2',
+                ]"
+              ></SelectButton>
+            </div>
+          </Fieldset>
         </div>
+      </div>
+      <div class="d-flex justify-content-between mt-1">
+        <div>
+
+        </div>
+        <div>
+          <Button size="small" class="btn-darken-1">
+            <i class="pi pi-download"></i>&nbsp;
+            Imprimer
+          </Button>&nbsp;&nbsp;
+          <Button size="small">Envoyer</Button>
+        </div>
+
       </div>
     </div>
   </section>
@@ -88,6 +147,23 @@
 import PageLayout from "../../components/PageLayout.vue";
 import Fieldset from 'primevue/fieldset';
 import SelectButton from "primevue/selectbutton";
+import {useRoute, useRouter} from "vue-router";
+import {onMounted, reactive, watch} from "vue";
+import useMyFetch from "../../compoables/useMyFetch.js";
+
+
+let patient = reactive({})
+const route = useRoute()
+
+onMounted(async()=>{
+  console.log(route.params.id)
+  const {data, error} = await useMyFetch('patients/'+route.params.id+'/').json();
+  patient = data.value;
+})
+
+watch(patient, (value)=>{
+  console.log(value)
+})
 </script>
 
 <style scoped>
