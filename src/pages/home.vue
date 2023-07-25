@@ -31,7 +31,7 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body">
-                    <h2 class="text-center">0</h2>
+                    <h2 class="text-center">{{ stats.patients}}</h2>
                     <h6 class="text-center">Patients</h6>
                   </div>
                 </div>
@@ -39,25 +39,32 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body">
-                    <h2 class="text-center">0</h2>
-                    <h6 class="text-center">Prestations</h6>
+                    <h2 class="text-center">{{stats.prestations}}</h2>
+                    <h6 class="text-center">Patients suivis</h6>
                   </div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body ">
-                    <h2 class="text-center">0</h2>
+                    <h2 class="text-center">{{ stats.personels}}</h2>
                     <h6 class="text-center">Personnels</h6>
                   </div>
                 </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 mt-1">
                 <div class="card">
                   <div class="card-body text-center">
-                    <ProgressBar class="progress" style=""/>
+                    <h4>Nombre de patients par maladie et par sexe</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-1">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <h4>Nombre de patients guerri par maladie et par sexe</h4>
                   </div>
                 </div>
               </div>
@@ -73,7 +80,18 @@
               <div class="card-body">
                 <div class="card-content">
                   <div id="line-chart" class="height-300 lineChart lineChartShadow">
-
+                    <table class="table">
+                      <tr>
+                        <th>Service</th>
+                        <th>Patients</th>
+                        <th>Guéris</th>
+                      </tr>
+                      <tr v-for="service in services" :key="service.id">
+                        <td>{{service.nom}}</td>
+                        <td>{{service.consultation_count}}</td>
+                        <td>0</td>
+                      </tr>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -92,13 +110,14 @@ import Nav from "../components/Nav.vue";
 import MainMenu from "../components/MainMenu.vue";
 import ProgressSpinner from "primevue/progressspinner";
 import useMyFetch from "../compoables/useMyFetch.js";
-import {watch} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {Chart} from "highcharts-vue";
 
 
+let {data: stats} = useMyFetch("statistiques/").json();
+let {data: services} = useMyFetch('services/').json()
 
-const {data: statistiques} = useMyFetch("statistiques/").json();
-
-watch(statistiques, (value)=>{
+watch(stats, (value)=>{
   console.log(value)
 })
 

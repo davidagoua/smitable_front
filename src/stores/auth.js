@@ -33,6 +33,7 @@ export const useAuthStore = defineStore({
             this.isLoggedOut = false;
             this.user = null;
             this.token = null;
+            localStorage.clear();
         }
     },
     persist: true

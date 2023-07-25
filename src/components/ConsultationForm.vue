@@ -142,7 +142,7 @@ import useMyFetch from "../compoables/useMyFetch.js";
 import InputNumber from "primevue/inputnumber";
 import {useToast} from "primevue/usetoast";
 import {useDialog} from "primevue/usedialog";
-
+import {useAuthStore} from "../stores/auth.js";
 
 const props = defineProps({
   consultation: {
@@ -153,6 +153,7 @@ const props = defineProps({
     required: true
   }
 })
+const useAuth = useAuthStore()
 const emit = defineEmits()
 console.log(props.consultation)
 
@@ -216,6 +217,7 @@ const save = async()=>{
       analyses.forEach((analyse)=>{
         analyse.patient_id = props.consultation.patient.id
         analyse.service_id = props.service_id
+        analyse.user_id = useAuth.user.id ?? 1
         console.log(analyse)
         let {error: anaError} = useMyFetch('analyse-patient/').post(analyse).json()
       })

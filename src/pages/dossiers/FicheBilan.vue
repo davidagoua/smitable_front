@@ -129,12 +129,14 @@
         <div>
 
         </div>
-        <div>
-          <Button size="small" class="btn-darken-1">
+        <div class="d-flex">
+
+          <Button v-show="showOptions" outlined size="small" class="btn-darken-1">
             <i class="pi pi-download"></i>&nbsp;
             Imprimer
           </Button>&nbsp;&nbsp;
-          <Button size="small">Envoyer</Button>
+          <Button @click="submit" size="small">Enregistrer</Button>
+
         </div>
 
       </div>
@@ -148,22 +150,44 @@ import PageLayout from "../../components/PageLayout.vue";
 import Fieldset from 'primevue/fieldset';
 import SelectButton from "primevue/selectbutton";
 import {useRoute, useRouter} from "vue-router";
-import {onMounted, reactive, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import useMyFetch from "../../compoables/useMyFetch.js";
+import {useToast} from "primevue/usetoast";
 
 
 let patient = reactive({})
+let toast = useToast()
 const route = useRoute()
+const showOptions = ref(false)
+
+let {data: analyse} = useMyFetch('analyse-patient/'+route.params.analyse_id+'/').json()
 
 onMounted(async()=>{
   console.log(route.params.id)
-  const {data, error} = await useMyFetch('patients/'+route.params.id+'/').json();
+  let {data, error} = await useMyFetch('patients/'+route.params.id+'/').json();
   patient = data.value;
+})
+
+watch(analyse, (value)=>{
+  console.log(value)
 })
 
 watch(patient, (value)=>{
   console.log(value)
 })
+
+
+const submit = async()=>{
+  analyse.value.state = 1
+  let {data, error} = useMyFetch('analyse-patient/'+analyse.value.id+'/').put(analyse.value).json()
+  showOptions.value = true
+
+  toast.add({
+    severity: 'success',
+    detail: 'Prelevement enregistré',
+    life: 3000
+  })
+}
 </script>
 
 <style scoped>

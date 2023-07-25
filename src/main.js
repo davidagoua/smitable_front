@@ -14,6 +14,7 @@ import InputText from "primevue/inputtext";
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Dialog from "primevue/dialog";
+import HighchartsVue from 'highcharts-vue'
 
 
 const app = createApp(App)
@@ -26,6 +27,7 @@ app.use(ToastService);
 app.use(DialogService);
 app.use(pinia);
 app.use(router);
+app.use(HighchartsVue);
 app.component(DataTable);
 app.component(Column);
 app.component('Button', Button);

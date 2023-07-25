@@ -54,6 +54,7 @@
               <Badge>{{ service.consultation_count}}</Badge>
             </div>
           </router-link>
+
         </li>
         </template>
 

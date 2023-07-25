@@ -16,17 +16,27 @@
     <Column field="patient.prenoms" header="Prénoms"></Column>
     <Column field="created_at" header="Date"></Column>
 
-    <Column field="etat" header="Etat"></Column>
+    <Column field="status" header="Etat">
+      <template #body="{data}">
+        <Badge :severity="{
+          0: 'default',
+          1: 'success'
+        }[data.patient.status]">
+          {{ {0: 'Visite', 1: 'Suivie'}[data.patient.status]}}
+        </Badge>
+      </template>
+    </Column>
     <Column header="Actions">
       <template #body="slotProps">
         <Button size="small"  class="mr-1" @click="createConsultation(slotProps.data)">
           <span>Consulter</span>
         </Button>
-        <Button size="small" text icon="pi pi-download"></Button>
+
         <router-link class="p-button p-button-sm" size="small" :to="'/dossier/'+slotProps.data.patient.id">
           <span class="ft ft-folder"></span>
           <span class="ml-1">Dossier</span>
         </router-link>
+        <Button size="small" text icon="pi pi-download"></Button>
       </template>
     </Column>
   </DataTable>
@@ -50,7 +60,7 @@ import Chip from 'primevue/chip';
 import {useDialog} from "primevue/usedialog";
 import Dialog from "primevue/dialog";
 import ConsultationForm from "../../components/ConsultationForm.vue";
-
+import Badge from "primevue/badge";
 
 
 const route = useRoute()
@@ -70,9 +80,6 @@ const consultations = reactive({
   loading: false,
   error: false
 })
-watch(pageTitle, ()=>{
-
-})
 onMounted(async ()=>{
   document.querySelector('.content-wrapper-before').style.backgroundImage = 'url(/images/banners/vih.jpg)'
   try{
@@ -88,6 +95,12 @@ onMounted(async ()=>{
   }
 })
 
+watch(()=> route.params.service_id, async(value, oldValue)=>{
+  console.log('service change from '+oldValue+' to '+value)
+  service_id.value = route.params.service_id
+  consultations.data = await consultationStore.fetchConsultationsForService(route.params.service_id)
+  pageTitle.value = route.params.service_name
+})
 
 
 const showConsultationForm = ref(false)

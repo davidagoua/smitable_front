@@ -40,7 +40,11 @@
         <Column
             header="Medicament"
             field="produit"
-        ></Column>
+        >
+          <template #body="{data}">
+
+          </template>
+        </Column>
         <Column
             header="Quantite"
             field="quantite"

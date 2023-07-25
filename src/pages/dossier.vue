@@ -72,16 +72,14 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-12 col-md-2">
+        <div class="col-lg-12 col-md-2" v-show="patient.status === 1">
           <div class="card ">
             <div class="card-body">
               <h5 class="card-title text-black-50"> <i class="ft-users text-lg-right"></i> Suivie (VIH)</h5>
               <div class="d-flex">
-                <Button size="small" class="mr-1">Fiche de prelevement au Bilan initial</Button>
-                <Button size="small" @click="goTo('/fiche/bilan-initial/'+patient_id)" class="mr-1">Fiche de bilan initial pour prise en charge</Button>
-                <Button size="small" class="mr-1">Fiche de suivi des personnes vivant du VIH</Button>
-                <Button size="small" class="mr-1">Fiche de routine</Button>
-                <Button size="small" class="mr-1">Fiche en cas d'exposition</Button>
+                <Button size="small" class="mr-1"> <i class="pi pi-plus mr-1"></i> Fiche de suivi des personnes vivant du VIH</Button>
+                <Button size="small" class="mr-1"> <i class="pi pi-plus mr-1"></i> Fiche de routine</Button>
+                <Button size="small" class="mr-1"> <i class="pi pi-plus mr-1"></i> Fiche en cas d'exposition</Button>
 
               </div>
             </div>
@@ -480,7 +478,6 @@ onMounted(async()=>{
   }finally {
     loading.value = false
   }
-
 })
 
 const goTo = (path) => {

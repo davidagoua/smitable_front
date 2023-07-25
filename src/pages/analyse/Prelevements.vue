@@ -19,7 +19,7 @@
       <Column field="service.nom" header="Service"></Column>
       <Column header="Actions">
         <template #body="{data}">
-          <Button size="small" @click="showPreleverForm(data)">Prelever</Button>
+          <Button size="small" @click="goTo('/fiche/bilan-initial/'+data.patient.id+'/'+data.id)">Prelever</Button>
         </template>
       </Column>
     </DataTable>
@@ -43,10 +43,13 @@ import useMyFetch from "../../compoables/useMyFetch.js";
 import Dialog from "primevue/dialog"
 import {reactive, ref} from "vue";
 import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router"
 
 
 
 const toast = useToast()
+const router = useRouter()
+
 const isPreleverForm = ref(false)
 let selected = reactive()
 const {data: analyses, loading} = useMyFetch('analyse-patient/?state=0').json()
@@ -58,6 +61,7 @@ const showPreleverForm = (analyse)=>{
 
 const submit  = ()=>{
   selected.state = 1
+  selected.user_id = 1
   let {data, error} = useMyFetch('analyse-patient/'+selected.id+'/').put(selected).json()
 
   toast.add({
@@ -67,6 +71,10 @@ const submit  = ()=>{
   analyses.value = analyses.value.filter((a)=> a.id !== selected.id)
   isPreleverForm.value = false
   selected.value = null
+}
+
+const goTo = (path)=>{
+  router.push(path)
 }
 </script>
 

@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory} from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import {useAuthStore} from "./stores/auth.js";
 
 
@@ -24,7 +24,7 @@ const routes = [
             {path: '/service/liste/:service_id/:service_name', component: ()=>import('./pages/services/ListPatient.vue')},
             {path: '/dossier/:id', component: ()=> import('./pages/dossier.vue')},
             {path: '/analyse/encours', component: ()=> import('./pages/analyse/AnalyseEnCour.vue')},
-            {path: '/fiche/bilan-initial/:id', component: ()=> import('./pages/dossiers/FicheBilan.vue')},
+            {path: '/fiche/bilan-initial/:id/:analyse_id?', component: ()=> import('./pages/dossiers/FicheBilan.vue')},
             {path: '/analyse/analyse-termines', component: ()=> import('./pages/analyse/AnalyseTermines.vue')},
             {path: '/analyse/prelevements', component: ()=> import('./pages/analyse/Prelevements.vue')},
         ]
@@ -34,7 +34,7 @@ const routes = [
 
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 });
 
