@@ -3,7 +3,7 @@
 <section class="card">
   <div class="card-body">
     <div class="d-flex mb-1 justify-content-between">
-      <div></div>
+      <div>{{ statusCode}}</div>
       <div>
         <Button class="ml-1" size="small" @click="goTo('/new-patient')">
           <span class="ft-plus"></span>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div >
-      <form class="row mb-2 align-items-end">
+      <form @submit.prevent="submit" class="row mb-2 align-items-end">
         <div class="col-md-4 mt-1">
           <label for="">Nom</label><br>
           <InputText class="w-100" v-model="searchForm.nom"/>
@@ -34,7 +34,7 @@
           <InputText class="w-100" type="date" v-model="searchForm.date_naissance"/>
         </div>
         <div class="col-md-4 mt-1 text-right">
-          <Button @click="submit">
+          <Button type="submit">
             <i class="pi pi-search mr-3"></i>
             Rechercher
           </Button>
@@ -42,11 +42,8 @@
       </form>
     </div>
     <DataTable :filters="filters" :value="patients" data-key="id" :selection="selectedPatient"   :loading="patientLoading">
-      <template #header>
-        <div class="d-flex justify-content-between">
-          <div></div>
-
-        </div>
+      <template #loading>
+        <div class="text-center">Chargement des resultats</div>
       </template>
 
       <Column selection-mode="multiple" />
@@ -91,7 +88,7 @@ import InputNumber from 'primevue/inputnumber';
 
 const router = useRouter();
 const toast = useToast()
-let {data: patients, loading: patientLoading, statusCode, onFetchError: onPatientFetchError } = useMyFetch('patients/').json()
+let {data: patients, isFetching: patientLoading, statusCode, onFetchError: onPatientFetchError } = useMyFetch('patients/').json()
 
 onPatientFetchError((error)=>{
 
@@ -99,10 +96,6 @@ onPatientFetchError((error)=>{
       severity: 'error',
       detail: error
     })
-})
-
-watch((patientLoading), (value)=>{
-  console.log(`value: ${value}`)
 })
 
 
@@ -121,17 +114,27 @@ const search = ref("");
 const goTo = (path) => {
   router.push(path);
 };
-
+watch(patients, (patients)=>{
+  console.log('patients:'+ patients.length)
+})
 
 const searchForm= reactive({})
 
-const submit = ()=>{
+const submit = async()=>{
   try{
-    patientLoading.value = true
-    let querypath = `code_patient=${searchForm.code_patient}&nom=${searchForm.nom}&prenoms=${searchForm.prenoms}&contact=${searchForm.contact}`
-    let {data, loading } = useMyFetch('patients/?'+querypath).json()
-    patients = data
-    patientLoading = loading
+    let querypath = `code_patient=${searchForm.code_patient ?? ''}&nom=${searchForm.nom ?? ''}&prenoms=${searchForm.prenoms ?? ''}&contact=${searchForm.contact ?? ''}`
+    let {data, isFetching, isFinished, error } = await useMyFetch('patients/?'+querypath).json()
+    patientLoading = isFetching
+    if(isFinished.value){
+      patients.value = data.value
+    }
+    if(error.value){
+      toast.add({
+        severity: 'error',
+        detail: "Error: " + error.value,
+        life: 3000
+      })
+    }
   }catch (e) {
     console.log(e)
   }finally {
