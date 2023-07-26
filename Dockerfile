@@ -1,4 +1,4 @@
-FROM node:18 as build-stage
+FROM node:18
 
 WORKDIR /app
 
@@ -7,10 +7,3 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx:lastest
-
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
