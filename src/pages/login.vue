@@ -57,7 +57,7 @@
                         <div class="text-right"><a href="auth-forgot-password.html" class="card-link">Mot de passe oublié ?</a></div>
                       </div>
 
-                      <button type="submit" class="btn btn-primary float-right btn-inline">Connecter</button>
+                      <Button type="submit" :loading="loading" class="btn btn-primary float-right btn-inline">Connecter</Button>
                     </form>
                   </div>
 
@@ -98,19 +98,11 @@ var loading = ref(false)
 console.log(import.meta.env.VITE_BACKEND_URL)
 const submit = async ()=>{
 
-  const {data, loading: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.VITE_BACKEND_URL+'auth/token/login/')
+  const {data, isFetching: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.VITE_BACKEND_URL+'auth/token/login/')
       .post(user).json()
   loading = myloading
 
-  onFetchResponse((response)=>{
-    console.log(response.status)
-    if(response.status === 401){
-      toast.add({
-        severity: 'error',
-        detail: "Nom d'utilisateur ou mot de passe incorrect"
-      })
-    }
-  })
+
 
   onFetchError((error)=>{
     console.error(error)
@@ -119,7 +111,7 @@ const submit = async ()=>{
       detail: error.message
     })
   })
-  if(data.value.auth_token){
+  if(data.value){
     toast.add({
       severity: 'success',
       detail: "Heureux de vous revoir !",
@@ -138,18 +130,22 @@ const submit = async ()=>{
           ...options.headers,
           Authorization: `Token ${myToken}`,
         }
-
         return {
           options,
         }
       }
     }).get().json()
-    console.log(data.value.auth_token)
-    console.log(user)
+
     authStore.login(data.value.auth_token, user.value)
     router.push('/')
     document.querySelector('body').style.backgroundImage = null
 
+  }else{
+    toast.add({
+      severity: 'error',
+      detail: "Nom d'utilisateur ou mot de passe incorrect !",
+      life: 3000
+    })
   }
 
 }

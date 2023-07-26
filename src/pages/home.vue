@@ -108,16 +108,26 @@
 <script setup>
 import Nav from "../components/Nav.vue";
 import MainMenu from "../components/MainMenu.vue";
-import ProgressSpinner from "primevue/progressspinner";
 import useMyFetch from "../compoables/useMyFetch.js";
 import {onMounted, ref, watch} from "vue";
 import {Chart} from "highcharts-vue";
+import {useServiceStore} from "../stores/services.js";
+import {storeToRefs} from "pinia";
 
 
+let serviceStore = useServiceStore()
 let {data: stats} = useMyFetch("statistiques/").json();
-let {data: services} = useMyFetch('services/').json()
+let { data: services } = useMyFetch("services/").json();
+
+onMounted(async()=>{
+
+})
 
 watch(stats, (value)=>{
+  console.log(value)
+})
+
+watch(services, (value)=>{
   console.log(value)
 })
 

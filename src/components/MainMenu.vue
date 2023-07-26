@@ -113,7 +113,7 @@ let {user} = storeToRefs(authStore)
 
 
 let serviceStore = useServiceStore()
-const {services} = storeToRefs(serviceStore)
+let { data: services } = useMyFetch("services/").json();
 
 
 onMounted(()=>{

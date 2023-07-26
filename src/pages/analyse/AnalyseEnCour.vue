@@ -71,7 +71,7 @@ import Column from "primevue/column";
 import Dropdown from "primevue/dropdown";
 import useMyFetch from "../../compoables/useMyFetch.js";
 import {reactive, ref} from "vue";
-import MultiSelect from "primevue/multiSelect";
+import MultiSelect from "primevue/multiselect";
 import InputNumber from "primevue/inputnumber";
 import {useToast} from "primevue/usetoast";
 
