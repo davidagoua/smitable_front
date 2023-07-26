@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from "vue";
+import {ref, onMounted, reactive, computed, watch} from "vue";
 import {usePatientStore} from "../stores/patient.js";
 import PageLayout from "../components/PageLayout.vue";
 import DataTable from "primevue/datatable";
@@ -91,7 +91,7 @@ import InputNumber from 'primevue/inputnumber';
 
 const router = useRouter();
 const toast = useToast()
-const {data: patients, loading: patientLoading, statusCode, onFetchError: onPatientFetchError } = useMyFetch('patients/').json()
+let {data: patients, loading: patientLoading, statusCode, onFetchError: onPatientFetchError } = useMyFetch('patients/').json()
 
 onPatientFetchError((error)=>{
 
@@ -99,6 +99,10 @@ onPatientFetchError((error)=>{
       severity: 'error',
       detail: error
     })
+})
+
+watch((patientLoading), (value)=>{
+  console.log(`value: ${value}`)
 })
 
 
@@ -127,8 +131,9 @@ const submit = ()=>{
     let querypath = `code_patient=${searchForm.code_patient}&nom=${searchForm.nom}&prenoms=${searchForm.prenoms}&contact=${searchForm.contact}`
     let {data, loading } = useMyFetch('patients/?'+querypath).json()
     patients = data
+    patientLoading = loading
   }catch (e) {
-
+    console.log(e)
   }finally {
     patientLoading.value = false
   }

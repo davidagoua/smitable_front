@@ -102,30 +102,22 @@
 
 <script setup>
 import {onMounted, watch} from 'vue'
-import {useStorage} from '@vueuse/core'
 import {useAuthStore} from "../stores/auth.js";
 import {storeToRefs} from "pinia";
 import Badge from "primevue/badge";
 import useMyFetch from "../compoables/useMyFetch.js";
+import {useServiceStore} from "../stores/services.js";
 
 let authStore = useAuthStore()
 let {user} = storeToRefs(authStore)
-let isAuthenticated = localStorage.getItem('token') !== null
-let {data: services} = useMyFetch('services/').json()
-const fetchServices = async ()=>{
-  try {
-    const {data} = await useMyFetch('services/').json()
-    services = data
-    localStorage.setItem('services', JSON.stringify(services))
-  }catch (e) {
-    console.error("verifail: "+e)
-  }
-}
 
+
+let serviceStore = useServiceStore()
+const {services} = storeToRefs(serviceStore)
 
 
 onMounted(()=>{
-  fetchServices().then(()=> console.log('service loaded'))
+  serviceStore.getServices()
 })
 watch(()=>services, (newVal, oldVal)=>{
   localStorage.setItem('services', JSON.stringify(newVal))

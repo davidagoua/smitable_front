@@ -4,7 +4,7 @@
 
 
   <section class="card">
-    <div class="card-body">
+    <form @submit.prevent="submit" class="card-body">
       <div >
         <div v-show="showSearchPatient" class="mb-3">
           <div>
@@ -24,25 +24,25 @@
             </div>
           </div>
         </div>
-        <div>
+        <div >
           <h3 v-if="showSearchPatient">Enregistrer un nouveau patient</h3>
           <h3 v-else="showSearchPatient">Modification information patient</h3>
           <div class="row">
             <div class="col-md-6">
               <label for="" >Nom</label><br>
-              <InputText v-model="patient.nom" class="w-100"/>
+              <InputText required v-model="patient.nom" class="w-100"/>
             </div>
             <div class="col-md-6">
               <label for="" >Prénoms</label><br>
-              <InputText v-model="patient.prenoms" class="w-100"/>
+              <InputText required v-model="patient.prenoms" class="w-100"/>
             </div>
             <div class="col-md-3 mt-1">
               <label for="">Genre</label>
-              <SelectButton v-model="patient.genre" option-value="value" class="w-100" option-label="name" :options="[{name: 'Masculin', value: 'M'},{name: 'Feminin', value:'F'}]" />
+              <SelectButton required v-model="patient.genre" option-value="value" class="w-100" option-label="name" :options="[{name: 'Masculin', value: 'M'},{name: 'Feminin', value:'F'}]" />
             </div>
             <div class="col-md-8 mt-1">
               <label for="">Situation Matrimoniale</label>
-              <SelectButton option-label="name" option-value="value" v-model="patient.situation_matrimoniale" class="w-100" :options="[
+              <SelectButton required option-label="name" option-value="value" v-model="patient.situation_matrimoniale" class="w-100" :options="[
                   {name: 'Marié', value: 'Marie'},
                   {name: 'Célibataire', value: 'Celibataire'},
                   {name: 'Divorcé', value: 'Divorce'},
@@ -52,11 +52,11 @@
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Date de naissance</label>
-              <InputText v-model="patient.date_naissance" class="w-100" type="date"/>
+              <InputText required v-model="patient.date_naissance" class="w-100" type="date"/>
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Lieu de naissance</label>
-              <InputText v-model="patient.lieu_naissance" class="w-100" />
+              <InputText required v-model="patient.lieu_naissance" class="w-100" />
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Numéro de téléphone</label>
@@ -64,12 +64,12 @@
               <span class="p-inputgroup-addon">
                 +225
               </span>
-                <InputMask v-model="patient.contact" class="w-100" mask="99 99-99-99-99" placeholder="99 99-99-99-99" />
+                <InputMask required v-model="patient.contact" class="w-100" mask="99 99-99-99-99" placeholder="99 99-99-99-99" />
               </div>
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Profession</label>
-              <Dropdown v-model="patient.profession" class="w-100" :options="professions" filter placeholder="Selectionner votre profession"  />
+              <Dropdown required v-model="patient.profession" class="w-100" :options="professions" filter placeholder="Selectionner votre profession"  />
             </div>
 
             <div class="d-flex w-100 px-2 mt-2 justify-content-between">
@@ -79,47 +79,47 @@
             <div class="col-md-12 row mt-1" v-for="(domicile, index) in patient.domiciles" :key="index">
               <div class="col-md-2 ">
                 <label for="">Pays</label>
-                <Dropdown v-model="domicile.pays" class="w-100" :option-label="'name.common'" option-value="name.common" :options="pays" filter placeholder="Selectionner votre ville"  />
+              <Dropdown required v-model="domicile.pays" class="w-100" :options="pays" filter placeholder="Selectionner votre ville"  />
 
               </div>
               <div class="col-md-2  ">
                 <label for="">Ville</label>
-                <Dropdown v-model="domicile.ville" class="w-100" :options="villes" filter placeholder="Selectionner votre ville"  />
+                <Dropdown required v-model="domicile.ville" class="w-100" :options="villes" filter placeholder="Selectionner votre ville"  />
 
               </div>
               <div class="col-md-2  ">
                 <label for="">Commune</label>
-                <Dropdown v-model="domicile.commune" class="w-100" :options="communes" filter placeholder="Selectionner votre ville"  />
+                <Dropdown required v-model="domicile.commune" class="w-100" :options="communes" filter placeholder="Selectionner votre ville"  />
               </div>
               <div class="col-md-2">
                 <label for="">Quartier</label>
-                <InputText v-model="domicile.quartier" class="w-100"/>
+                <InputText required v-model="domicile.quartier" class="w-100"/>
               </div>
               <div class="col-md-2">
                 <label for="">Date debut</label>
-                <InputText type="date"/>
+                <InputText required type="date"/>
               </div>
               <div class="col-md-2">
                 <label for="">Date fin</label>
-                <InputText type="date"/>
+                <InputText required type="date"/>
               </div>
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Nationalité</label><br>
               <div class="d-flex">
-                <div class="">
+                <div class="d-flex">
                   <RadioButton v-model="patient.nationalite" inputId="ivoirienne" name="nationalite" value="Ivoirienne" />
                   <label for="ingredient2" class="ml-2">Ivoirienne</label>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex  ml-3">
                   <RadioButton :checked="showElseNationalite" v-model="patient.nationalite" inputId="autres" name="nationalite" value="Autre" />
                   <label for="ingredient2" class="ml-2">Autres</label>
                 </div>
               </div>
             </div>
-            <div class="col-md-6 mt-1" v-show="showElseNationalite" >
-              <label for="">Autres</label>
-              <InputText class="w-100" />
+            <div class="col-md-6 mt-1">
+              <label for="">Niveau d'étude</label><br>
+              <Dropdown v-model="patient.niveau_etude" class="w-100" :options="['Aucun','Primaire','Secondaire','Universitaire']"></Dropdown>
             </div>
 
             <div class="row col-md-12 mt-1 w-100">
@@ -138,9 +138,9 @@
       </div>
       <div class="mt-2 col-md-12 d-flex justify-content-between">
         <div></div>
-        <Button @click="submit" :loading="loading"  label="Enregistrer"/>
+        <Button type="submit" :loading="loading"  label="Enregistrer"/>
       </div>
-    </div>
+    </form>
 
   </section>
 </div>
@@ -186,7 +186,7 @@ const communes = [
 ]
 
 // country list
-const {data: pays}= useFetch('https://restcountries.com/v3.1/independent?status=true')
+const pays = ['Côte dìvoire','Mali','Burkina Faso','Guinnée','Ghana','Liberia','Mauritania','Niger','Nigeria','Senegal','Sierra Leone','Togo','Benin','Gambie']
 
 
 const steps = ref([
@@ -212,9 +212,7 @@ let patient = reactive({
 const consultation = reactive({
   service_id: null
 })
-watch(patient, (value)=>{
-  console.log(value)
-})
+
 onMounted(async ()=>{
   if(route.params.patient_id){
     showSearchPatient.value = false
