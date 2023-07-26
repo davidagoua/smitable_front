@@ -27,7 +27,11 @@
         <div >
           <h3 v-if="showSearchPatient">Enregistrer un nouveau patient</h3>
           <h3 v-else="showSearchPatient">Modification information patient</h3>
-          <div class="row">
+          <div class="row mt-2">
+            <div class="col-md-12 mb-1">
+              <label for="" >Code Patient</label><br>
+              <InputText v-model="patient.code_patient" class="w-100"/>
+            </div>
             <div class="col-md-6">
               <label for="" >Nom</label><br>
               <InputText required v-model="patient.nom" class="w-100"/>
@@ -84,16 +88,16 @@
               </div>
               <div class="col-md-2  ">
                 <label for="">Ville</label>
-                <Dropdown required v-model="domicile.ville" class="w-100" :options="villes" filter placeholder="Selectionner votre ville"  />
+                <Dropdown  v-model="domicile.ville" class="w-100" :options="villes" filter placeholder="Selectionner votre ville"  />
 
               </div>
               <div class="col-md-2  ">
                 <label for="">Commune</label>
-                <Dropdown required v-model="domicile.commune" class="w-100" :options="communes" filter placeholder="Selectionner votre ville"  />
+                <Dropdown  v-model="domicile.commune" class="w-100" :options="communes" filter placeholder="Selectionner votre ville"  />
               </div>
               <div class="col-md-2">
                 <label for="">Quartier</label>
-                <InputText required v-model="domicile.quartier" class="w-100"/>
+                <InputText  v-model="domicile.quartier" class="w-100"/>
               </div>
               <div class="col-md-2">
                 <label for="">Date debut</label>
@@ -101,7 +105,7 @@
               </div>
               <div class="col-md-2">
                 <label for="">Date fin</label>
-                <InputText required type="date"/>
+                <InputText  type="date"/>
               </div>
             </div>
             <div class="col-md-6 mt-1">
@@ -238,7 +242,7 @@ const submit = async()=>{
             life: 3000
           });
         }
-
+        patient = {}
       }
     }else{
       const {data} = await useMyFetch('patients/'+patient.id+'/').put(patient).json()
