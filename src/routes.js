@@ -22,11 +22,12 @@ const routes = [
             {path: '/rdv-liste', component: ()=>import('./pages/acceuil/RendezVousList.vue')},
             {path: '/rdv-new', component: ()=>import('./pages/acceuil/NewRdv.vue')},
             {path: '/service/liste/:service_id/:service_name', component: ()=>import('./pages/services/ListPatient.vue')},
-            {path: '/dossier/:id', component: ()=> import('./pages/dossier.vue')},
+            {path: '/dossier/:id', component: ()=> import('./pages/dossier.vue'), name: 'dossier_patient'},
             {path: '/analyse/encours', component: ()=> import('./pages/analyse/AnalyseEnCour.vue')},
             {path: '/fiche/bilan-initial/:id/:analyse_id?', component: ()=> import('./pages/dossiers/FicheBilan.vue')},
             {path: '/analyse/analyse-termines', component: ()=> import('./pages/analyse/AnalyseTermines.vue')},
             {path: '/analyse/prelevements', component: ()=> import('./pages/analyse/Prelevements.vue')},
+            {path: '/settings/personnel', component: ()=> import('./pages/settings/personnel.vue')},
         ]
     }
 

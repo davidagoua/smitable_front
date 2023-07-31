@@ -12,34 +12,36 @@ const authStore = useAuthStore()
 const toast = useToast()
 const online = useOnline()
 
-onMounted(()=>{
-  let pusher = new Pusher('78473876483763764',
+let pusher = new Pusher('app-key',
     {
       wsHost: 'smitci.com',
       wsPort: 6001,
       forceTLS: false,
       enabledTransports: ['ws'],
-      cluster: ''
+      cluster: 'smitci.com'
     }
-  )
-  pusher.subscribe('channel_1').bind('notification', (message)=>{
-    console.log(message)
-    toast.add({
-      severity: "success",
-      detail: message.message
-    })
+)
+
+pusher.connection.bind('connected', () => {
+  console.log('ws connected')
+})
+
+let user_channel = pusher.subscribe('channel_1')
+
+user_channel.bind('notification', (message)=>{
+  console.log('message')
+  console.log(message)
+  toast.add({
+    severity: "success",
+    detail: message.message
   })
 })
+
 
 </script>
 
 <template>
-
-  <Suspense>
-    <router-view/>
-
-  </Suspense>
-
+  <router-view/>
   <DynamicDialog/>
   <Toast />
 

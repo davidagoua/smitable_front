@@ -46,16 +46,22 @@
         <li class="nav-item ml-2">
           <span class="text-primary">Services</span>
         </li>
-        <li v-for="service in services"  :key="service.id" class=" nav-item">
-          <router-link :to="'/service/liste/'+ service.id + '/'+ service.nom" class="d-flex w-100">
-            <i class="ft-layers"></i>
-            <span class="menu-title" data-i18n="">{{ service.nom }}</span>
-            <div class="text-right flex-grow-1">
-              <Badge>{{ service.consultation_count}}</Badge>
-            </div>
-          </router-link>
-
-        </li>
+        <suspense>
+          <template #default>
+            <li v-for="service in services"  :key="service.id" class=" nav-item">
+              <router-link :to="'/service/liste/'+ service.id + '/'+ service.nom" class="d-flex w-100">
+                <i class="ft-layers"></i>
+                <span class="menu-title" data-i18n="">{{ service.nom }}</span>
+                <div class="text-right flex-grow-1">
+                  <Badge>{{ service.consultation_count}}</Badge>
+                </div>
+              </router-link>
+            </li>
+          </template>
+          <template #fallback>
+            <li class="nav-items">loading</li>
+          </template>
+        </suspense>
         </template>
 
         <li class="nav-item ml-2">
@@ -89,6 +95,9 @@
           <li  class=" nav-item"><a href=""><i
               class="la la-cogs"></i><span class="menu-title" data-i18n="">Générales</span></a>
           </li>
+          <li  class=" nav-item"><router-link to="/settings/personnel"><i
+              class="la la-cogs"></i><span class="menu-title" data-i18n="">Personnel Medicale</span></router-link>
+          </li>
           <li class=" nav-item"><a href=""><i
               class="ft-book"></i><span class="menu-title" data-i18n="">Documentation</span></a>
           </li>
@@ -112,16 +121,10 @@ let authStore = useAuthStore()
 let {user} = storeToRefs(authStore)
 
 
-let serviceStore = useServiceStore()
-let { data: services } = useMyFetch("services/").json();
+let {data:services, isFinished, isFetching} = useMyFetch('services/').json()
+//let { data: services } = useMyFetch("services/").json();
 
 
-onMounted(()=>{
-  serviceStore.getServices()
-})
-watch(()=>services, (newVal, oldVal)=>{
-  localStorage.setItem('services', JSON.stringify(newVal))
-})
 
 </script>
 

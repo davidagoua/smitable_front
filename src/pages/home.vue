@@ -31,7 +31,7 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body">
-                    <h2 class="text-center">{{ stats.patients}}</h2>
+                    <h2 class="text-center">{{ stats?.patients}}</h2>
                     <h6 class="text-center">Patients</h6>
                   </div>
                 </div>
@@ -39,7 +39,7 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body">
-                    <h2 class="text-center">{{stats.prestations}}</h2>
+                    <h2 class="text-center">{{stats?.prestations}}</h2>
                     <h6 class="text-center">Patients suivis</h6>
                   </div>
                 </div>
@@ -47,7 +47,7 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-body ">
-                    <h2 class="text-center">{{ stats.personels}}</h2>
+                    <h2 class="text-center">{{ stats?.personels}}</h2>
                     <h6 class="text-center">Personnels</h6>
                   </div>
                 </div>
@@ -64,7 +64,7 @@
               <div class="col-md-12 mt-1">
                 <div class="card">
                   <div class="card-body text-center">
-                    <h4>Nombre de patients guerri par maladie et par sexe</h4>
+                    <h4>Nombre de patients guerris par maladie et par sexe</h4>
                   </div>
                 </div>
               </div>
@@ -93,6 +93,9 @@
                       </tr>
                     </table>
                   </div>
+                  <div>
+                    <Chart type="bar" :data="chart1.options" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -109,27 +112,36 @@
 import Nav from "../components/Nav.vue";
 import MainMenu from "../components/MainMenu.vue";
 import useMyFetch from "../compoables/useMyFetch.js";
-import {onMounted, ref, watch} from "vue";
-import {Chart} from "highcharts-vue";
+import {computed, onMounted, ref, watch, reactive} from "vue";
+import Chart from "primevue/chart"
 import {useServiceStore} from "../stores/services.js";
-import {storeToRefs} from "pinia";
+
 
 
 let serviceStore = useServiceStore()
 let {data: stats} = useMyFetch("statistiques/").json();
-let { data: services } = useMyFetch("services/").json();
+
+let { data: services, isFetching, onFetchResponse } =  useMyFetch("services/").json();
+
+let chart1 = computed(()=> ({
+  options: {
+    labels: [services.value.map((s)=> s.nom)],
+    datasets: [
+      {data: services.value.map((s)=>s.consultation_count)}
+    ]
+  }
+}))
+
+
+
 
 onMounted(async()=>{
 
 })
-
 watch(stats, (value)=>{
   console.log(value)
 })
 
-watch(services, (value)=>{
-  console.log(value)
-})
 
 </script>
 

@@ -8,7 +8,7 @@
               <div class="row">
                 <div class="col-lg-4 col-md-4 d-flex justify-content-around">
                   <div class="patient-img-name text-center">
-                    <vue-qr size="150" text="patient.code_patient"/>
+                    <vue-qr size="150" :text="patient.code_patient"/>
                     <h4>{{ patient.code_patient }} </h4>
                   </div>
                 </div>

@@ -3,7 +3,7 @@
 <section class="card">
   <div class="card-body">
     <div class="d-flex mb-1 justify-content-between">
-      <div>{{ statusCode}}</div>
+      <div></div>
       <div>
         <Button class="ml-1" size="small" @click="goTo('/new-patient')">
           <span class="ft-plus"></span>

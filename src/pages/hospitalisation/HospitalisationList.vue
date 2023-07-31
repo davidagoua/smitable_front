@@ -18,6 +18,7 @@
     <Column header="Code Patient" field="patient.code_patient"/>
     <Column header="Nom" field="patient.nom"/>
     <Column header="Prénoms" field="patient.prenoms"/>
+    <Column header="Service" field="service.nom"/>
     <Column header="Status" field="state">
       <template #body="{data}">
         <Tag :value="{
@@ -45,7 +46,7 @@
     </Column>
   </DataTable>
 
-  <Dialog v-model:visible="isUniteForm" :style="{width: '25vw'}">
+  <Dialog header="Attribuer une chambre" v-model:visible="isUniteForm" :style="{width: '25vw'}">
     <div>
       <label for="">Box Libre</label><br>
       <Dropdown v-model="selected.unite" class="w-100" :options="boxes" option-value="id" :option-label="'nom'"></Dropdown>
@@ -69,6 +70,11 @@ import {ref, computed} from 'vue'
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import {useRouter} from 'vue-router'
+import {useToast} from "primevue/useToast";
+
+
+
+const toast = useToast()
 
 const {data: hospitalisations, loading} = useMyFetch('hospitalisations/').json()
 const selected = ref()
@@ -85,6 +91,12 @@ const submitUniteForm = ()=>{
   let {data} = useMyFetch('hospitalisations/'+selected.value.id+'/').put(selected.value).json()
   selected.value = null
   isUniteForm.value = false
+  toast.add({
+    severity: "success",
+    summary: "Succès",
+    detail: "Chambre attribué au patient",
+    life: 3000,
+  });
 }
 const goTo = (path)=>{
   router.push(path)

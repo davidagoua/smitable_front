@@ -36,8 +36,8 @@
           </template>
           <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
           <Column field="patient.code_patient" header="Code  Patient">
-            <template #body="slotProps">
-              <ConstanteView :key="slotProps.data.id" :code_patient="slotProps.data.patient.code_patient" :constante="slotProps.data.constante_set.slice(-1)[0]"/>
+            <template #body="{data}">
+              <ConstanteView :key="data.id" :code_patient="data.patient.code_patient" :constante="data.constante_set.slice(-1)[0]"/>
             </template>
           </Column>
           <Column field="created_at" sortable="" header="Date de création">
@@ -93,7 +93,7 @@
 
 <script setup>
 import PageLayout from "../../components/PageLayout.vue";
-import {defineProps, onMounted, computed, watch, ref, defineAsyncComponent, vShow} from 'vue'
+import {defineProps, onMounted, computed, watch, ref, defineEmits, vShow} from 'vue'
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import {storeToRefs}  from "pinia";
@@ -111,11 +111,17 @@ import RdvForm from "../../components/RdvForm.vue";
 import TestRapideForm from "../../components/TestRapideForm.vue";
 import {useDateFormat} from "@vueuse/core";
 import Dropdown from "primevue/dropdown";
+import {useServiceStore} from "../../stores/services.js";
+
+
 
 const dialog = useDialog()
 const toast = useToast()
-const {data: consultations} = useMyFetch('consultations/?status=0').json();
 const route = useRouter()
+const emits = defineEmits(['reload-services'])
+const serviceStore = useServiceStore()
+
+const {data: consultations} = useMyFetch('consultations/?status=0').json();
 const selectedConsultation = ref([])
 const patientAttenteTable = ref()
 const menu = ref()
@@ -158,7 +164,7 @@ const menuOptions = ref([
 
 ])
 
-const {data: services} = useMyFetch('services/').json()
+const services = serviceStore.services
 const saveService = (event)=>{
   console.log(service)
   selectedItem.value.service_id = service.value
@@ -166,6 +172,7 @@ const saveService = (event)=>{
   onFetchResponse((response)=>{
     if(response.ok){
       toast.add({severity:'success', summary:'Service', detail:'Service enregistré avec succès', life: 3000})
+
       closeDialog()
     }else{
       toast.add({severity:'error', summary:'Service', detail:"Erreur lors de l'enregistrement du service", life: 3000})
@@ -173,9 +180,7 @@ const saveService = (event)=>{
   })
 }
 
-watch(services, (newValue, oldValue) => {
-  console.log(newValue)
-})
+
 
 const toggleMenu = (event, data) => {
   selectedItem.value = data

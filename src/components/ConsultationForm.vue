@@ -5,124 +5,145 @@
      <Editor v-model="value" editorStyle="height: 120px"/>
    </div>
 
-   <div class="row">
-     <div class=" col-md-4">
-       <label for="">Symptomes</label> <br>
-       <MultiSelect
-           class="w-100"
-           v-model="consultation.motifs"
-           :options="motifsConsultations"
-       />
-     </div>
-     <div class="col-md-4">
-       <label for="">Antécédents</label> <br>
-       <MultiSelect
-           v-model="consultation.antecedents"
-           class="w-100"
-           :options="antecedents"
-       />
-     </div>
-     <div class="col-md-4">
-       <label for="">Mode de vie</label> <br>
-       <MultiSelect
-           v-model="consultation.mode_vie"
-           class="w-100"
-           :options="['Cigarette','Drogue','Alcool']"
-       />
-     </div>
-   </div>
-
-   <div class="mt-3 row">
-     <div class="col-3" v-for="(ant, index) in consultation.antecedents">
-       <div class="p-inputgroup flex-1">
+   <TabView>
+     <TabPanel header="Symptomes">
+       <div class=" col-md-12">
+         <MultiSelect
+             class="w-100"
+             v-model="consultation.motifs"
+             :options="motifsConsultations"
+         />
+         <div>
+           <div v-for="motif , index in consultation.motifs" :key="index" class="row">
+             <div class="col-md-6">
+               <div>{{ motif }}</div>
+             </div>
+             <div>
+               <Input v-model="motif.reason"/>
+             </div>
+           </div>
+         </div>
+       </div>
+     </TabPanel>
+      <TabPanel header="Antécedants">
+        <div class="col-md-12">
+          <MultiSelect
+              v-model="consultation.antecedents"
+              class="w-100"
+              :options="antecedents"
+          />
+        </div>
+        <div class="mt-3 row">
+          <div class="col-3" v-for="(ant, index) in consultation.antecedents">
+            <div class="p-inputgroup flex-1">
           <span class="p-inputgroup-addon">
               {{ant}}
           </span>
-         <InputText placeholder="valeur" />
+              <InputText placeholder="valeur" />
+            </div>
+          </div>
+        </div>
+      </TabPanel>
+       <TabPanel header="Mode de vie">
+         <div class="col-md-12">
+           <MultiSelect
+               v-model="consultation.mode_vie"
+               class="w-100"
+               :options="['Cigarette','Drogue','Alcool']"
+           />
+         </div>
+        </TabPanel>
+      <TabPanel header="Prescription">
+        <div class="mt-3">
+          <div class="d-flex justify-content-between">
+            <Button @click="prescriptions.push({})" size="small" >
+              <i class="pi pi-plus mr-1"></i>
+              Prescription</Button>
+            <Button size="small" @click="" text icon="pi pi-trash">
+            </Button>
+          </div>
+          <hr>
+          <div v-for="(prescription, index) in prescriptions" class="row align-items-center" :key="index">
+            <div class="col-md-5">
+              <label for="">Medicament</label><br>
+              <Dropdown option-label="nom" option-value="id" filter :options="medicaments" class="w-100" v-model="prescription.produit_id"/>
+            </div>
+            <div class="col-md-3">
+              <label for="">Nombre de dose</label><br>
+              <InputNumber class="w-100" v-model="prescription.quantite"/>
+            </div>
+            <div class="col-md-3">
+              <label for="">Fréquences</label><br>
+              <MultiSelect filter :options="['Matin','Midi','Soir']" class="w-100" v-model="prescription.frequence"/>
+            </div>
+            <div class="float-right">
+              <Button @click="removePrescription(index)" size="small" text class="pi pi-times text-red"></Button>
+            </div>
+          </div>
+        </div>
+      </TabPanel>
+      <TabPanel header="Molécules">
+        <div class="mt-3">
+
+          <div class="row" >
+            <div class="col-md-6 "  >
+              <label for="">Molécules</label><br>
+              <MultiSelect class="w-100 flex-grow-1" v-model="protocole.molecules_id" :options="molecules" option-value="id" filter option-label="nom"/>
+            </div>
+
+          </div>
+        </div>
+      </TabPanel>
+      <TabPanel header="Analyses">
+       <div class="mt-3">
+         <div class="d-flex justify-content-between">
+           <Button @click="analyses.push({})" size="small" >
+             <i class="pi pi-plus mr-1"></i>
+             Analyses</Button>
+           <Button size="small" @click="" text icon="pi pi-trash">
+           </Button>
+         </div>
+         <hr>
+         <div v-for="(analyse, index) in analyses" class="row" :key="index">
+           <div class="col-md-6">
+             <label for="">Analyse</label><br>
+             <Dropdown class="w-100" :options="analyseOptions" option-value="id" filter option-label="nom"  v-model="analyse.medicament"/>
+           </div>
+           <div class="col-md-5">
+             <label for="">Laboratoire</label><br>
+             <Dropdown :options="laboratoires" option-label="nom" option-value="id" class="w-100"  v-model="analyse.laboratoire"/>
+           </div>
+           <div class="float-right">
+             <Button @click="removePrescription(index)" size="small" text class="pi pi-times text-red"></Button>
+           </div>
+         </div>
        </div>
-     </div>
-   </div>
+     </TabPanel>
 
-   <div class="mt-3">
+      <TabPanel header="Hospitalisation">
+        <div class="mt-3">
+          <div class="d-flex justify-content-between">
+            <Button size="small" @click="showHospitalisation = ! showHospitalisation">Hospitalisation</Button>
+            <Button size="small" @click="" text icon="pi pi-trash">
+            </Button>
+          </div>
+          <br>
+          <div class="row" v-show="showHospitalisation">
+            <div class="col-6">
+              <label for="">Chambres disponibles</label><br>
+              <Dropdown v-model="hospitalisation.unite" class="w-100" :options="unites" option-value="id" option-label="nom"></Dropdown>
+            </div>
+          </div>
+        </div>
+      </TabPanel>
 
-   <div class="row" >
-     <div class="col-md-6 "  >
-       <label for="">Molécules</label><br>
-       <MultiSelect class="w-100 flex-grow-1" v-model="protocole.molecules_id" :options="molecules" option-value="id" filter option-label="nom"/>
-     </div>
 
-   </div>
- </div>
+   </TabView>
 
-
-
-   <div class="mt-3">
-     <div class="d-flex justify-content-between">
-       <Button @click="prescriptions.push({})" size="small" >
-         <i class="pi pi-plus mr-1"></i>
-         Prescription</Button>
-       <Button size="small" @click="" text icon="pi pi-trash">
-       </Button>
-     </div>
-       <hr>
-     <div v-for="(prescription, index) in prescriptions" class="row align-items-center" :key="index">
-       <div class="col-md-5">
-         <label for="">Medicament</label><br>
-         <Dropdown option-label="nom" option-value="id" filter :options="medicaments" class="w-100" v-model="prescription.produit_id"/>
-       </div>
-       <div class="col-md-3">
-         <label for="">Nombre de dose</label><br>
-         <InputNumber class="w-100" v-model="prescription.quantite"/>
-       </div>
-       <div class="col-md-3">
-         <label for="">Fréquences</label><br>
-         <MultiSelect filter :options="['Matin','Midi','Soir']" class="w-100" v-model="prescription.frequence"/>
-       </div>
-       <div class="float-right">
-         <Button @click="removePrescription(index)" size="small" text class="pi pi-times text-red"></Button>
-       </div>
-     </div>
-   </div>
+   <div class="row">
 
 
 
-   <div class="mt-3">
-     <div class="d-flex justify-content-between">
-       <Button @click="analyses.push({})" size="small" >
-         <i class="pi pi-plus mr-1"></i>
-         Examen</Button>
-       <Button size="small" @click="" text icon="pi pi-trash">
-       </Button>
-     </div>
-     <hr>
-     <div v-for="(analyse, index) in analyses" class="row" :key="index">
-       <div class="col-md-6">
-         <label for="">Analyse</label><br>
-         <Dropdown class="w-100" :options="analyseOptions" option-value="id" filter option-label="nom"  v-model="analyse.medicament"/>
-       </div>
-       <div class="col-md-5">
-         <label for="">Laboratoire</label><br>
-         <Dropdown :options="laboratoires" option-label="nom" option-value="id" class="w-100"  v-model="analyse.laboratoire"/>
-       </div>
-       <div class="float-right">
-         <Button @click="removePrescription(index)" size="small" text class="pi pi-times text-red"></Button>
-       </div>
-     </div>
-   </div>
-
-   <div class="mt-3">
-     <div class="d-flex justify-content-between">
-       <Button size="small" @click="showHospitalisation = ! showHospitalisation">Hospitalisation</Button>
-       <Button size="small" @click="" text icon="pi pi-trash">
-       </Button>
-     </div>
-     <br>
-     <div class="row" v-show="showHospitalisation">
-       <div class="col-6">
-         <label for="">Chambres disponibles</label><br>
-         <Dropdown v-model="hospitalisation.unite" class="w-100" :options="unites" option-value="id" option-label="nom"></Dropdown>
-       </div>
-     </div>
    </div>
 
    <p class="mt-3 text-right">
@@ -143,6 +164,10 @@ import InputNumber from "primevue/inputnumber";
 import {useToast} from "primevue/usetoast";
 import {useDialog} from "primevue/usedialog";
 import {useAuthStore} from "../stores/auth.js";
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+
+
 
 const props = defineProps({
   consultation: {
