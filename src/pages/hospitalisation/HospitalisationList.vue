@@ -70,7 +70,7 @@ import {ref, computed} from 'vue'
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import {useRouter} from 'vue-router'
-import {useToast} from "primevue/useToast";
+import {useToast} from "primevue/usetoast";
 
 
 
