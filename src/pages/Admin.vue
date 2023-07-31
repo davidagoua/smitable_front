@@ -2,10 +2,6 @@
   <Nav/>
   <MainMenu/>
 
-  <p class="text-right">
-    <Button @click="showSidebar = true">Sidebar</Button>
-
-  </p>
 
   <router-view/>
   <Sidebar style="z-index: 1000" v-model:visible="showSidebar" position="right">
