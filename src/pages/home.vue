@@ -117,23 +117,23 @@ import Chart from "primevue/chart"
 import {useServiceStore} from "../stores/services.js";
 
 
-
-let serviceStore = useServiceStore()
 let {data: stats} = useMyFetch("statistiques/").json();
-
+let chart1 = null;
 let { data: services, isFetching, onFetchResponse } =  useMyFetch("services/").json();
 
-let chart1 = computed(()=> ({
-  options: {
-    labels: [services.value.map((s)=> s.nom)],
-    datasets: [
-      {data: services.value.map((s)=>s.consultation_count)}
-    ]
+watch(isFetching, (value)=>{
+  if(value){
+    chart1 = computed(()=> ({
+      options: {
+        labels: [services.value.map((s)=> s.nom)],
+        datasets: [
+          {data: services.value.map((s)=>s.consultation_count)}
+        ]
+      }
+    }))
   }
-}))
 
-
-
+})
 
 onMounted(async()=>{
 

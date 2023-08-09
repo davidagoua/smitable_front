@@ -15,7 +15,7 @@ import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Dialog from "primevue/dialog";
 import HighchartsVue from 'highcharts-vue'
-
+import ConfirmationService from 'primevue/confirmationservice';
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -24,6 +24,7 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(PrimeVue);
 app.use(ToastService);
+app.use(ConfirmationService);
 app.use(DialogService);
 app.use(pinia);
 app.use(router);

@@ -5,7 +5,19 @@ import DynamicDialog from "primevue/dynamicdialog";
 import { useAuthStore } from "./stores/auth.js";
 import Pusher from 'pusher-js'
 import {onMounted} from "vue";
+import ConfirmDialog from "primevue/confirmdialog"
 import {useOnline} from "@vueuse/core"
+import {useSpeechRecognition} from "@vueuse/core";
+
+const {
+  isSupported,
+  isListening,
+  isFinal,
+  result,
+  start,
+  stop,
+} = useSpeechRecognition()
+
 
 
 const authStore = useAuthStore()
@@ -44,6 +56,7 @@ user_channel.bind('notification', (message)=>{
   <router-view/>
   <DynamicDialog/>
   <Toast />
+  <ConfirmDialog></ConfirmDialog>
 
   <div v-show="!online" style="z-index: 10000; top: 0" class="p-1 text-white w-100 position-fixed text-center bg-danger">Vous êtes hors connexion :(</div>
 </template>

@@ -4,20 +4,19 @@
 
 
   <router-view/>
-  <Sidebar style="z-index: 1000" v-model:visible="showSidebar" position="right">
-    <div>
-      Patient Selectionner {{ selectedPatient}}
-    </div>
-  </Sidebar>
+  <FastView/>
+
+
+
 </template>
 
-<script>
+<script setup>
 import Nav from "../components/Nav.vue";
 import MainMenu from "../components/MainMenu.vue";
 import Sidebar from "primevue/sidebar";
-
 import {useOverviewState} from "../stores/overview.js";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import FastView from "../components/FastView.vue";
 
 
 let showSidebar = ref(false)

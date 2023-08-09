@@ -14,12 +14,12 @@
              :options="motifsConsultations"
          />
          <div>
-           <div v-for="motif , index in consultation.motifs" :key="index" class="row">
-             <div class="col-md-6">
+           <div v-for="(motif, index) in consultation.motifs" :key="index" class="row mt-1 align-items-center">
+             <div class="col-md-4">
                <div>{{ motif }}</div>
              </div>
-             <div>
-               <Input v-model="motif.reason"/>
+             <div class="col-md-8">
+               <InputText class="w-100" v-model="motif.reason" placeholder="Description..."/>
              </div>
            </div>
          </div>
@@ -147,6 +147,7 @@
    </div>
 
    <p class="mt-3 text-right">
+     <Button severity="" outlined icon="pi pi-download" label="Télécharger"/>&nbsp;&nbsp;
      <Button @click="save" :loading="allLoad">Enregistrer</Button>
    </p>
  </div>

@@ -37,7 +37,7 @@
           <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
           <Column field="patient.code_patient" header="Code  Patient">
             <template #body="{data}">
-              <ConstanteView :key="data.id" :code_patient="data.patient.code_patient" :constante="data.constante_set.slice(-1)[0]"/>
+              <Button @click="overviewState.selectPatient(data)" :label="data.patient.code_patient" text></Button>
             </template>
           </Column>
           <Column field="created_at" sortable="" header="Date de création">
@@ -112,14 +112,14 @@ import TestRapideForm from "../../components/TestRapideForm.vue";
 import {useDateFormat} from "@vueuse/core";
 import Dropdown from "primevue/dropdown";
 import {useServiceStore} from "../../stores/services.js";
-
-
+import {useOverviewState} from "../../stores/overview.js";
 
 const dialog = useDialog()
 const toast = useToast()
 const route = useRouter()
 const emits = defineEmits(['reload-services'])
 const serviceStore = useServiceStore()
+
 
 const {data: consultations} = useMyFetch('consultations/?status=0').json();
 const selectedConsultation = ref([])
@@ -210,6 +210,8 @@ const filters = ref({
   },
 })
 
+
+const overviewState = useOverviewState()
 </script>
 
 <style scoped>
