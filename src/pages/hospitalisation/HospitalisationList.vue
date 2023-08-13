@@ -15,7 +15,11 @@
       </div>
     </template>
     <Column header="Date" field="created_at"/>
-    <Column header="Code Patient" field="patient.code_patient"/>
+    <Column header="Code Patient" >
+        <template #body="{data}">
+            <Button @click.prevent="overviewState.selectPatient(data)" text >{{ data.patient.code_patient }}</Button>
+        </template>
+    </Column>
     <Column header="Nom" field="patient.nom"/>
     <Column header="Prénoms" field="patient.prenoms"/>
     <Column header="Service" field="service.nom"/>
@@ -71,6 +75,7 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import {useRouter} from 'vue-router'
 import {useToast} from "primevue/usetoast";
+import {useOverviewState} from "../../stores/overview.js";
 
 
 
@@ -101,6 +106,8 @@ const submitUniteForm = ()=>{
 const goTo = (path)=>{
   router.push(path)
 }
+
+const overviewState = useOverviewState()
 </script>
 
 <style scoped>

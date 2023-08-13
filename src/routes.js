@@ -42,7 +42,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
-    console.log(authStore.isLoggedIn)
+
     if (to.path !== '/connexion' && !authStore.isLoggedIn) {
         next('/connexion');
     } else {

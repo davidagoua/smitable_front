@@ -34,8 +34,11 @@
                       </fieldset>
 
                       <fieldset class="form-label-group position-relative has-icon-left">
-                        <label for="user-password">Mot de passe</label>
-                        <input type="password" v-model="user.password" class="form-control" id="user-password" placeholder="Mot de passe" required>
+                        <label for="user-password">Mot de passe</label><br>
+                        <span class="p-input-icon-right w-100" >
+                          <i @click="showpass = !showpass" :class="showpass ? 'pi pi-eye-slash': 'pi pi-eye'"></i>
+                          <input :type="showpass ? 'text' : 'password'" v-model="user.password" class="form-control" id="user-password" placeholder="Mot de passe" required>
+                        </span>
                         <div class="form-control-position">
                           <i class="feather icon-lock"></i>
                         </div>
@@ -46,10 +49,10 @@
                             <div class="vs-checkbox-con vs-checkbox-primary">
                               <input type="checkbox">
                               <span class="vs-checkbox">
-                                                                        <span class="vs-checkbox--check">
-                                                                            <i class="vs-icon feather icon-check"></i>
-                                                                        </span>
-                                                                    </span>
+                                      <span class="vs-checkbox--check">
+                                          <i class="vs-icon feather icon-check"></i>
+                                      </span>
+                                  </span>
                               <span class="ml-1">Se souvenir de moi</span>
                             </div>
                           </fieldset>
@@ -57,7 +60,7 @@
                         <div class="text-right"><a href="auth-forgot-password.html" class="card-link">Mot de passe oublié ?</a></div>
                       </div>
 
-                      <Button type="submit" :loading="loading" class="btn btn-primary float-right btn-inline">Connecter</Button>
+                      <Button icon="pi pi-signin" type="submit" :loading="loading" label="Se connecter" class="btn btn-primary float-right btn-inline"/>
                     </form>
                   </div>
 
@@ -79,7 +82,7 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {reactive, ref, watch} from "vue";
 import useMyFetch from "../compoables/useMyFetch.js";
 import {useFetch} from "@vueuse/core";
 import {useToast} from "primevue/usetoast";
@@ -94,60 +97,55 @@ const authStore = useAuthStore()
 const user = reactive({})
 const toast = useToast()
 const router = useRouter()
-var loading = ref(false)
-console.log(import.meta.env.VITE_BACKEND_URL)
+const loading = ref(false)
+const showpass = ref(false)
 const submit = async ()=>{
+  loading.value = true
 
-  const {data, isFetching: myloading, onFetchError, onFetchResponse} = await useFetch(import.meta.env.VITE_BACKEND_URL+'auth/token/login/')
+  const {data, statusCode} = await useFetch(import.meta.env.VITE_BACKEND_URL+'auth/token/login/')
       .post(user).json()
-  loading = myloading
-
-
-
-  onFetchError((error)=>{
-    console.error(error)
-    toast.add({
-      severity: 'error',
-      detail: error.message
-    })
-  })
-  if(data.value){
+  if(statusCode.value === 200){
     toast.add({
       severity: 'success',
       detail: "Heureux de vous revoir !",
       life: 3000
     })
-    localStorage.setItem('token', data.value.auth_token ?? 'veryshow')
-    const {data: user, onFetchResponse} = await useMyFetch('auth/me/',{
-      async beforeFetch({ url, options, cancel }) {
-        const myToken = data.value.auth_token
+    await getUserInfo(data)
 
-        if (!myToken) {
-          cancel()
-        }
 
-        options.headers = {
-          ...options.headers,
-          Authorization: `Token ${myToken}`,
-        }
-        return {
-          options,
-        }
-      }
-    }).get().json()
-
-    authStore.login(data.value.auth_token, user.value)
-    router.push('/')
-    document.querySelector('body').style.backgroundImage = null
-
-  }else{
+  }else if( statusCode.value === 400){
     toast.add({
       severity: 'error',
       detail: "Nom d'utilisateur ou mot de passe incorrect !",
       life: 3000
     })
   }
+  loading.value = false
 
+}
+
+const getUserInfo = async(data)=>{
+  localStorage.setItem('token', data.value.auth_token ?? 'veryshow')
+  const {data: user, onFetchResponse} = await useMyFetch('auth/me/',{
+    async beforeFetch({ url, options, cancel }) {
+      const myToken = data.value.auth_token
+
+      if (!myToken) {
+        cancel()
+      }
+
+      options.headers = {
+        ...options.headers,
+        Authorization: `Token ${myToken}`,
+      }
+      return {
+        options,
+      }
+    }
+  }).get().json()
+  authStore.login(data.value.auth_token, user.value)
+  document.querySelector('body').style.backgroundImage = null
+  router.push('/')
 }
 </script>
 

@@ -71,9 +71,11 @@
     </section>
   </div>
 
-  <Dialog header="Constante" v-if="selectedItem" v-model:visible="showConstanteForm" @hide="closeDialog" :style="{ width: '50vw' }">
+  <!--
+  <Dialog modal header="Constante" v-if="selectedItem" v-model:visible="showConstanteForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <ConstanteForm @close-dialog="closeDialog" :consultation="selectedItem"/>
   </Dialog>
+  -->
   <Dialog modal header="Programmer un Rendez-vous" v-model:visible="showRdvForm" @hide="closeDialog" :style="{ width: '50vw' }">
     <RdvForm @close-dialog="closeDialog" :patient="selectedItem.patient"></RdvForm>
   </Dialog>
@@ -93,19 +95,15 @@
 
 <script setup>
 import PageLayout from "../../components/PageLayout.vue";
-import {defineProps, onMounted, computed, watch, ref, defineEmits, vShow} from 'vue'
+import {ref, defineEmits,} from 'vue'
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import {storeToRefs}  from "pinia";
 import {useDialog} from 'primevue/usedialog'
 import {useToast} from 'primevue/usetoast'
-import {useConsultationStore} from "../../stores/consultation.js";
 import Dialog from "primevue/dialog";
-import ConstanteForm from "../../components/ConstanteForm.vue";
-import {useRoute, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import Menu from "primevue/menu";
 import {PrimeIcons} from 'primevue/api'
-import ConstanteView from "../../components/ConstanteView.vue";
 import useMyFetch from "../../compoables/useMyFetch.js";
 import RdvForm from "../../components/RdvForm.vue";
 import TestRapideForm from "../../components/TestRapideForm.vue";
@@ -113,10 +111,13 @@ import {useDateFormat} from "@vueuse/core";
 import Dropdown from "primevue/dropdown";
 import {useServiceStore} from "../../stores/services.js";
 import {useOverviewState} from "../../stores/overview.js";
+import {useConstanteForm} from "../../compoables/useConstanteForm.js";
 
 const dialog = useDialog()
 const toast = useToast()
 const route = useRouter()
+const constanteForm = useConstanteForm()
+
 const emits = defineEmits(['reload-services'])
 const serviceStore = useServiceStore()
 
@@ -137,7 +138,7 @@ const menuOptions = ref([
     label: 'Constantes',
     icon: PrimeIcons.PLUS,
     command: ()=>{
-      showConstanteForm.value = true
+      constanteForm.selectItem(selectedItem.value)
     }
   },
   {
@@ -164,11 +165,10 @@ const menuOptions = ref([
 
 ])
 
-const services = serviceStore.services
-const saveService = (event)=>{
-  console.log(service)
+const services = await serviceStore.services
+const saveService = async (event)=>{
   selectedItem.value.service_id = service.value
-  const {onFetchResponse} = useMyFetch('consultations/'+selectedItem.value.id+'/').put(selectedItem.value).json()
+  const {onFetchResponse} = await useMyFetch('consultations/'+selectedItem.value.id+'/').put(selectedItem.value).json()
   onFetchResponse((response)=>{
     if(response.ok){
       toast.add({severity:'success', summary:'Service', detail:'Service enregistré avec succès', life: 3000})
@@ -179,9 +179,6 @@ const saveService = (event)=>{
     }
   })
 }
-
-
-
 const toggleMenu = (event, data) => {
   selectedItem.value = data
   menu.value.toggle(event);

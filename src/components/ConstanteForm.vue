@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <Dialog modal header="Constantes" v-if="constanteForm.selectedItem" v-model:visible="constanteForm.showConstanteForm.value" @hide="constanteForm.closeDialog" :style="{ width: '50vw' }">
+    <div>
     <div class="row mt-2">
       <div class="col-md-12">
         <div class="w-100">
@@ -40,6 +41,7 @@
       <Button :loading="loading" @click="submit()">Enregistrer</Button>
     </div>
   </div>
+  </Dialog>
 </template>
 
 <script setup>
@@ -49,41 +51,46 @@ import Button from 'primevue/button'
 import {defineProps, ref, reactive, defineEmits} from 'vue'
 import useMyFetch from "../compoables/useMyFetch.js";
 import {useToast} from "primevue/usetoast";
+import Dialog from "primevue/dialog";
+import {useDialog} from "primevue/usedialog";
+import {useConstanteForm} from "../compoables/useConstanteForm.js";
 
 
-const props = defineProps(['consultation'])
+const dialog = useDialog()
+const constanteForm = useConstanteForm()
+
 const params = ref({})
 const emit = defineEmits()
 const loading = ref(false)
 const toast = useToast()
 const newConstantes = reactive({
-  consultation_id: props.consultation.id
+  consultation_id: constanteForm.selectedItem.id
 })
 
 const submit = async ()=>{
   try{
     loading.value = true
-    const {onFetchResponse} = await useMyFetch('constantes/').post(newConstantes).json()
-    onFetchResponse((response)=>{
-      if(response.status === 201){
-        toast.add({
-          severity: 'success',
-          life: 3000,
-          detail: "Constantes enregistrées"
-        })
-      }else{
-        toast.add({
-          severity: 'error',
-          life: 3000,
-          detail: response.statusText
-        })
-      }
-    })
+    const {data, statusCode} = await useMyFetch('constantes/').post(newConstantes).json()
+
+    if(statusCode.value === 201){
+      toast.add({
+        severity: 'success',
+        life: 3000,
+        detail: "Constantes enregistrées"
+      })
+      constanteForm.closeDialog()
+    }else{
+      toast.add({
+        severity: 'error',
+        life: 3000,
+        detail: statusCode.value
+      })
+    }
   }catch (e) {
     console.error(e)
   }finally {
     loading.value = false
-    emit('close-dialog')
+
   }
 }
 

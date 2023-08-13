@@ -15,6 +15,7 @@
           :value="users"
           data-key="id"
           selectionMode="single"
+          :ref="usersTable"
         >
           <Column selectionMode="multiple"></Column>
           <Column field="id" header="ID"></Column>
@@ -70,7 +71,7 @@
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Numero de téléphone</label><br>
-              <InputMask id="contact" mask="00 00-00-00-00" placeholder="00 00-00-00-00"  type="phone" v-model="newPatient.contact" class="w-100"/>
+              <InputText v-model="newPatient.contact" class="w-100"/>
             </div>
             <div class="col-md-6 mt-1">
               <label for="">Mot de passe</label><br>
@@ -182,11 +183,13 @@ let {data: groups} = useMyFetch('groups/').json()
 let {data: permissions} = useMyFetch('permissions/').json()
 const toast = useToast()
 const confirm = useConfirm();
+const usersTable = ref()
 
 let showaddmodal = ref(false)
 let newPatient = reactive({
   groups_all: [],
   groups: [],
+  contact: null,
   permissions: computed(()=> {
     let permissions = []
     newPatient.groups_all.forEach(group => {
@@ -228,18 +231,18 @@ let addUserForm = reactive({
   loading: false,
   errors: {}
 })
-const addUser = ()=>{
+const addUser = async()=>{
   newPatient.username = newPatient.email
   addUserForm.loading = true
-  const {data, onFetchError, isFinished} = useMyFetch('users/').post(newPatient).json()
-  watch(isFinished, (value)=>{
-    if(value && !onFetchError.value){
-      users.value.push(data.value)
+  const {data, statusCode} = await useMyFetch('users/').post(newPatient).json()
+  console.log(data.value)
+  if(statusCode.value === 201){
+      users.value = [...users.value, data.value]
       showaddmodal.value = false
-      users.value.push(data)
       toast.add({severity:'success', summary: 'Succès', detail: 'Utilisateur ajouté avec succès', life: 3000});
-    }
-  })
+  }else{
+      toast.add({severity: 'error', detail: 'Une erreur est survenu', life: 3000})
+  }
 }
 
 

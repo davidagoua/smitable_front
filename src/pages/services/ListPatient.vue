@@ -50,7 +50,7 @@
           <DataTable :filters="filters" :value="consultations_suivies" :loading="consultations.loading" data-key="id">
             <template #empty>
               <div class="d-flex justify-content-center align-items-center" style="height: 100px">
-                <h4 class="text-muted">Aucune consultation</h4>
+                <h6 class="text-muted">Aucune consultation</h6>
               </div>
             </template>
             <Column selection-mode="multiple"></Column>
@@ -137,9 +137,22 @@ const consultations = reactive({
   loading: false,
   error: false
 })
-watch(()=> consultations.data, (value)=> console.log(value))
-const consultations_ordinaires = computed(()=> consultations.data.filter((c)=> c.status === 0))
-const consultations_suivies = computed(()=> consultations.data.filter((c)=> c.status === 1))
+const consultations_ordinaires = computed(()=>{
+  let c = []
+  if(consultations.data){
+    console.log(consultations.data)
+    c = consultations.data.filter((c)=> c.status === 0)
+  }
+  return c
+})
+const consultations_suivies = computed(()=>{
+    let c = []
+    if(consultations.data){
+        console.log(consultations.data)
+        c = consultations.data.filter((c)=> c.status === 1)
+    }
+    return c
+})
 
 
 onMounted(async ()=>{
@@ -148,7 +161,7 @@ onMounted(async ()=>{
     consultations.loading = true;
     pageTitle.value = route.params.service_name
     service_id.value = route.params.service_id
-    let {data} = await  useMyFetch('services/'+service_id.value+'/consultations/')
+    let {data, statusCode} = await  useMyFetch('services/'+service_id.value+'/consultations/').json()
     console.log(data.value)
     consultations.data = data.value
   }catch (e) {

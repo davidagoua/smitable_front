@@ -1,6 +1,6 @@
 <template>
  <div>
-   <div class="mb-3">
+   <div class="mb-1">
      <label for="">Description </label><br>
      <Editor v-model="value" editorStyle="height: 120px"/>
    </div>

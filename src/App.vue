@@ -4,25 +4,21 @@ import Toast from 'primevue/toast';
 import DynamicDialog from "primevue/dynamicdialog";
 import { useAuthStore } from "./stores/auth.js";
 import Pusher from 'pusher-js'
-import {onMounted} from "vue";
+import {onMounted, watch} from "vue";
 import ConfirmDialog from "primevue/confirmdialog"
 import {useOnline} from "@vueuse/core"
 import {useSpeechRecognition} from "@vueuse/core";
 
-const {
-  isSupported,
-  isListening,
-  isFinal,
-  result,
-  start,
-  stop,
-} = useSpeechRecognition()
 
 
 
 const authStore = useAuthStore()
 const toast = useToast()
 const online = useOnline()
+
+watch(online, (value)=>{
+    console.log(value)
+})
 
 let pusher = new Pusher('app-key',
     {
@@ -53,7 +49,13 @@ user_channel.bind('notification', (message)=>{
 </script>
 
 <template>
-  <router-view/>
+    <suspense>
+        <template #default>
+
+          <router-view/>
+
+        </template>
+    </suspense>
   <DynamicDialog/>
   <Toast />
   <ConfirmDialog></ConfirmDialog>
