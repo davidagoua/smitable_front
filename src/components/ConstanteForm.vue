@@ -63,14 +63,14 @@ const params = ref({})
 const emit = defineEmits()
 const loading = ref(false)
 const toast = useToast()
-const newConstantes = reactive({
-  consultation_id: constanteForm.selectedItem.id
-})
+const newConstantes = reactive({})
 
 const submit = async ()=>{
   try{
     loading.value = true
-    const {data, statusCode} = await useMyFetch('constantes/').post(newConstantes).json()
+    console.log(constanteForm.selectedItem)
+    newConstantes.consultation_id = constanteForm.selectedItem.value.id
+    const {statusCode, data} = await useMyFetch('constantes/').post(newConstantes).json()
 
     if(statusCode.value === 201){
       toast.add({
@@ -78,6 +78,7 @@ const submit = async ()=>{
         life: 3000,
         detail: "Constantes enregistrées"
       })
+      constanteForm.afterEffect(data.value)
       constanteForm.closeDialog()
     }else{
       toast.add({

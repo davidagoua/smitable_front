@@ -24,7 +24,7 @@
           <Column field="first_name" header="Prénoms"></Column>
           <Column header="Roles" style="{width: '20vw'}">
             <template #body="{data}">
-              <Tag v-for="group in data.groups" >{{ group }}</Tag>
+              <Tag v-for="group in data.groups" >{{ group.name }}</Tag>
             </template>
           </Column>
           <Column>
@@ -42,8 +42,6 @@
             <div></div>
             <div>
               <Button @click="showaddgarde = true" label="Ajouter une garde" icon="pi pi-plus" size="small"></Button>
-
-
             </div>
           </div>
           <div class="mt-3">
@@ -119,7 +117,8 @@
             </div>
             <div class="col-12 mt-1">
               <label for="">Roles</label>
-              <MultiSelect v-model="selectedUser.groups_all" filter class="w-100" :options="groups" option-label="name" ></MultiSelect>
+
+              <MultiSelect v-model="selectedUser.groups" filter class="w-100" :options="groups" option-label="name" ></MultiSelect>
             </div>
             <div class="col-12 mt-1">
               <label for="">Permissions</label>
@@ -202,6 +201,7 @@ let newPatient = reactive({
 let showeditmodal = ref(false)
 let selectedUser = ref(null)
 let onUserEdit = (data)=>{
+  console.log(data)
   selectedUser.value = data
   showeditmodal.value = true
 }

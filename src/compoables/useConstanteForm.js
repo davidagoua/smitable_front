@@ -13,6 +13,9 @@ export const useConstanteForm = createGlobalState(()=>{
         showConstanteForm.value = true
         openDialogCallback(item)
     }
+    const afterEffect = (value)=>{
+        submitCallback(value)
+    }
     const onCloseDialog = (func)=>{
         closeDialogCallback = func
     }
@@ -22,7 +25,6 @@ export const useConstanteForm = createGlobalState(()=>{
     const onSubmit = (func)=>{
         submitCallback = func
     }
-
     const closeDialog = ()=>{
         showConstanteForm.value = false
         selectedItem.value = {}
@@ -30,6 +32,7 @@ export const useConstanteForm = createGlobalState(()=>{
     }
 
     return {
-        closeDialog, onCloseDialog, selectItem, selectedItem, showConstanteForm, onSelectItem, onSubmit
+        closeDialog, onCloseDialog, selectItem, selectedItem, showConstanteForm, onSelectItem, onSubmit,
+        afterEffect
     }
 })

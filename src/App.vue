@@ -19,29 +19,19 @@ const online = useOnline()
 watch(online, (value)=>{
     console.log(value)
 })
+Pusher.logToConsole = true;
 
-let pusher = new Pusher('app-key',
-    {
-      wsHost: 'smitci.com',
-      wsPort: 6001,
-      forceTLS: false,
-      enabledTransports: ['ws'],
-      cluster: 'smitci.com'
-    }
-)
-
-pusher.connection.bind('connected', () => {
-  console.log('ws connected')
+let pusher = new Pusher('abcac9dd524eef266863',{
+  cluster: 'eu'
 })
 
 let user_channel = pusher.subscribe('channel_1')
 
 user_channel.bind('notification', (message)=>{
-  console.log('message')
-  console.log(message)
   toast.add({
     severity: "success",
-    detail: message.message
+    detail: message.message,
+    life: 3000
   })
 })
 
@@ -52,7 +42,11 @@ user_channel.bind('notification', (message)=>{
     <suspense>
         <template #default>
 
-          <router-view/>
+          <router-view v-slot="{ Component }">
+            <transition name="fade">
+              <component :is="Component" />
+            </transition>
+          </router-view>
 
         </template>
     </suspense>

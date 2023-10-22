@@ -137,22 +137,9 @@ const consultations = reactive({
   loading: false,
   error: false
 })
-const consultations_ordinaires = computed(()=>{
-  let c = []
-  if(consultations.data){
-    console.log(consultations.data)
-    c = consultations.data.filter((c)=> c.status === 0)
-  }
-  return c
-})
-const consultations_suivies = computed(()=>{
-    let c = []
-    if(consultations.data){
-        console.log(consultations.data)
-        c = consultations.data.filter((c)=> c.status === 1)
-    }
-    return c
-})
+
+const consultations_ordinaires = computed(()=>consultations.data.filter((c)=> c.status === 0))
+const consultations_suivies = computed(()=> consultations.data.filter((c)=> c.status === 1))
 
 
 onMounted(async ()=>{
@@ -162,11 +149,8 @@ onMounted(async ()=>{
     pageTitle.value = route.params.service_name
     service_id.value = route.params.service_id
     let {data, statusCode} = await  useMyFetch('services/'+service_id.value+'/consultations/').json()
-    console.log(data.value)
     consultations.data = data.value
   }catch (e) {
-    console.log(e)
-    consultations.loading = true;
     consultations.error = e
   }finally {
     consultations.loading = false;
